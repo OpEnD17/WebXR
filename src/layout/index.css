@@ -1,0 +1,16 @@
+.header-container {
+    height: 400px;
+    width: 100%;
+    background-color: azure;
+}
+
+.body-container {
+    width: 100%;
+    background-color:aqua;
+}
+
+.footer-container {
+    height: 400px;
+    width: 100%;
+    background-color: orange;
+}

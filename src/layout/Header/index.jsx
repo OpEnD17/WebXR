@@ -1,6 +1,8 @@
+import './index.css';
+
 const Header = () => {
     return (
-        <div>This is a header</div>
+        <div>This is header</div>
     )
 };
 

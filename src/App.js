@@ -1,9 +1,8 @@
-import './App.css';
-import Header from './layout/Header';
+import Layout from "./layout";
 
 function App() {
   return (
-    <Header />
+    <Layout />
   );
 }
 
