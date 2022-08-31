@@ -1,0 +1,9 @@
+.inputBox-container{
+    height: 45px;
+    width: 485px;
+    display: flex;
+    background-color: #fff;
+    justify-content: space-around;
+    align-items: center;
+    border-radius: 5px;
+}
