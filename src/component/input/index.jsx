@@ -10,12 +10,18 @@ const Input = props => {
         borderRadius: "5px",
         float: "right",
         fontSize: "15px",
-        border: "1px solid #fff"
+        border: "1px solid #fff",
+        paddingLeft: "10px"
     }
 
     return (
         <>
-            <input className="input" style={style} placeholder={props.prompt}/>
+            <input
+                className="input"
+                style={style}
+                placeholder={props.prompt}
+                onChange={e => props.setValue(e.target.value)}
+            />
         </>
     );
 };

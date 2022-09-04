@@ -17,7 +17,12 @@ const Button = props => {
 
     return (
         <>
-            <div style={style}>{props.prompt}</div>
+            <div
+                style={style}
+                onClick={() => alert(props.value)}
+            >
+                {props.prompt}
+            </div>
         </>
     );
 }
