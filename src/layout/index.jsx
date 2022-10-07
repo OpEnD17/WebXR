@@ -4,7 +4,9 @@ import Body from "./Body";
 
 import "./index.css"
 
-const Layout = () => {
+const Layout = props => {
+
+
     return (
         <>
             <div className='header-container'>

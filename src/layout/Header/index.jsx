@@ -4,7 +4,9 @@ import './index.css';
 
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 
-const Header = () => {
+const Header = props => {
+
+
     return (
         <div>
             <div className='header-left-description'>
