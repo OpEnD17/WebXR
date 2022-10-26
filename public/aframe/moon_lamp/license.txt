@@ -1,0 +1,11 @@
+Model Information:
+* title:	Moon Lamp
+* source:	https://sketchfab.com/3d-models/moon-lamp-584b8b618d3d4051bb7e4f28e78e8901
+* author:	Kylie Stockberger (https://sketchfab.com/ZeldaLilly)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Moon Lamp" (https://sketchfab.com/3d-models/moon-lamp-584b8b618d3d4051bb7e4f28e78e8901) by Kylie Stockberger (https://sketchfab.com/ZeldaLilly) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

@@ -1,0 +1,413 @@
+{
+  "accessors": [
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        35.21384811401367,
+        42.646236419677734,
+        38.699798583984375
+      ],
+      "min": [
+        -47.05331039428711,
+        -44.71307373046875,
+        -16.427978515625
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 786384,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        0.9999995231628418,
+        0.9999785423278809,
+        0.9999581575393677
+      ],
+      "min": [
+        -0.9999731779098511,
+        -0.9999942779541016,
+        -0.9999946355819702
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        1.0,
+        0.998961865901947
+      ],
+      "min": [
+        0.0,
+        0.0
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 296442,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 1572768,
+      "componentType": 5126,
+      "count": 23166,
+      "max": [
+        35.20742416381836,
+        42.646236419677734,
+        38.699798583984375
+      ],
+      "min": [
+        -47.05331039428711,
+        -33.62717056274414,
+        -16.31332778930664
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 1850760,
+      "componentType": 5126,
+      "count": 23166,
+      "max": [
+        0.9999980926513672,
+        0.9999387264251709,
+        0.9999581575393677
+      ],
+      "min": [
+        -0.9957374930381775,
+        -0.9999977350234985,
+        -0.9999381303787231
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 524256,
+      "componentType": 5126,
+      "count": 23166,
+      "max": [
+        0.9976692199707031,
+        1.0
+      ],
+      "min": [
+        0.0,
+        0.0
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 1185768,
+      "componentType": 5125,
+      "count": 96906,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 2128752,
+      "componentType": 5126,
+      "count": 22117,
+      "max": [
+        200.01443481445313,
+        201.005126953125,
+        281.40814208984375
+      ],
+      "min": [
+        -199.98558044433594,
+        -198.99484252929688,
+        -108.59180450439453
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 2394156,
+      "componentType": 5126,
+      "count": 22117,
+      "max": [
+        0.9999942779541016,
+        0.9999942779541016,
+        0.9952614307403564
+      ],
+      "min": [
+        -0.9999942779541016,
+        -0.9999942779541016,
+        -0.999998927116394
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 709584,
+      "componentType": 5126,
+      "count": 22117,
+      "max": [
+        0.0,
+        0.0
+      ],
+      "min": [
+        0.0,
+        0.0
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 1573392,
+      "componentType": 5125,
+      "count": 132483,
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "YouniqueĪdeaStudio (https://sketchfab.com/sinnervoncrawsz)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/simple-pot-and-plant-d489a069b49c4451a0fa17130fba4c28",
+      "title": "simple pot and plant"
+    },
+    "generator": "Sketchfab-12.66.0",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 2103324,
+      "name": "floatBufferViews",
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 886520,
+      "byteOffset": 2103324,
+      "byteStride": 8,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 2659560,
+      "byteOffset": 2989844,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 5649404,
+      "uri": "scene.bin"
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "name": "POT__0",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.4474867706687813,
+          0.4236054442314211,
+          0.4236054442314211,
+          1.0
+        ],
+        "metallicFactor": 0.0,
+        "roughnessFactor": 0.0
+      }
+    },
+    {
+      "doubleSided": true,
+      "name": "Material.003",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.015693131133742606,
+          0.13250822156020342,
+          0.0048730150468306276,
+          1.0
+        ],
+        "metallicFactor": 0.0,
+        "roughnessFactor": 0.2879601494824485
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "planta join.001_Material.003_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 1,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "planta join.001_Material.003_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 5,
+            "POSITION": 4,
+            "TEXCOORD_0": 6
+          },
+          "indices": 7,
+          "material": 1,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "POT__0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 9,
+            "POSITION": 8,
+            "TEXCOORD_0": 10
+          },
+          "indices": 11,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "matrix": [
+        1.25135989037517e-06,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.778577124773851e-22,
+        -1.25135989037517e-06,
+        0.0,
+        0.0,
+        1.25135989037517e-06,
+        2.778577124773851e-22,
+        0.0,
+        -2499.83203125,
+        -8744.5517578125,
+        65.78371429443165,
+        1.0
+      ],
+      "name": "Sketchfab_model"
+    },
+    {
+      "children": [
+        2
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "156fa8393dd04ab1abec78ecf19411d8.fbx"
+    },
+    {
+      "children": [
+        3,
+        6
+      ],
+      "name": "RootNode"
+    },
+    {
+      "children": [
+        4,
+        5
+      ],
+      "matrix": [
+        1354.6894384459001,
+        -329.5408488562487,
+        21.36351304096964,
+        0.0,
+        4.877120250306608,
+        -70.22933896355337,
+        -1392.5808556266018,
+        0.0,
+        330.1965845622536,
+        1353.0364796037993,
+        -67.07865380280992,
+        0.0,
+        -901.8589477539063,
+        37194.125,
+        -758.38818359375,
+        1.0
+      ],
+      "name": "planta join.001"
+    },
+    {
+      "mesh": 0,
+      "name": "planta join.001_Material.003_0"
+    },
+    {
+      "mesh": 1,
+      "name": "planta join.001_Material.003_0"
+    },
+    {
+      "children": [
+        7
+      ],
+      "matrix": [
+        100.00000762939453,
+        0.0,
+        0.0,
+        0.0,
+        -0.0,
+        -1.6292069182169283e-05,
+        -100.00000762939321,
+        0.0,
+        0.0,
+        100.00000762939321,
+        -1.6292069182169283e-05,
+        0.0,
+        -79.06307220458984,
+        10.864930152893066,
+        -126.21981048583984,
+        1.0
+      ],
+      "name": "POT"
+    },
+    {
+      "mesh": 2,
+      "name": "POT__0"
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Sketchfab_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ]
+}
