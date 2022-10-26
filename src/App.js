@@ -1,20 +1,17 @@
-import Layout from "./layout";
-import AframeTest from "./Views/aframe";
-import Join from "./Views/join";
+import { Route, Routes } from "react-router-dom";
+import Index from './views/index';
+import Other from './views/other';
+import Login from './Login';
 
-import "./App.css";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+
 
 function App() {
-
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}></Route>
-        <Route path="/conference" element={<Join />}></Route>
-        <Route path="/aframe" element={<AframeTest />}></Route>
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route path="/" element={<Index />}></Route>
+      <Route path="/other" element={<Other />}></Route>
+      <Route path="/Login" element={<Login />}></Route>
+    </Routes>
   );
 }
 

@@ -1,30 +1,35 @@
-import "./index.css";
+import { useState } from 'react';
+import Button from '../button';
+import Input from '../input';
 
-import { useNavigate } from "react-router";
+import "./index.css"
 
-const InputBox = props => {
+const InputBox = () => {
 
-    const navigate = useNavigate();
+    const [value, setValue] = useState();
+
 
     return (
-
-        <div className='inputBox-container'>
-            <input
-                className='input'
-                onChange={e => console.log(e.target.value)}
-                placeholder='Enter meeting room ...'
-            />
-            <div
-                className="button"
-                onClick={() => {
-                    navigate('/conference');
-                }}
-            >
-                Start meeting
+        <>
+            <div className='inputBox-container'>
+                <Input
+                    height={40}
+                    width={350}
+                    prompt="Enter meeting name..."
+                    setValue = {setValue}
+                />
+                <Button
+                    height="40px"
+                    width="120px"
+                    prompt="Start meeting"
+                    onClick={
+                        () => {
+                        }
+                    }
+                    value = {value}
+                />
             </div>
-        </div>
-
-
+        </>
     )
 };
 

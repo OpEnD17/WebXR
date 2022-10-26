@@ -1,0 +1,16 @@
+.header-container {
+    height: 400px;
+    width: 100%;
+    background:url(../../../image/headerBG.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    -webkit-background-size: cover;
+    -o-background-size: cover;
+    background-position: center center;
+    
+}
+
+.body-container {
+    padding: 40px;
+    background-color:rgba(250, 251, 253, 0.2);
+}

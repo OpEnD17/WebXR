@@ -1,0 +1,31 @@
+.nav-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background: #131519;
+  color: #fff;
+}
+
+.nav-left img{
+  width: 100px;
+}
+
+.nav-right {
+  margin-left: 300px;
+  display: flex;
+  color: #fff;
+}
+a{
+  text-decoration: none; /* 去除默认的下划线 */
+  color: #fff;    /* 去除默认的颜色和点击后变化的颜色 */ 
+}
+.nav-right > a {
+  padding: 20px;
+  cursor: pointer;
+}
+
+.nav-right > a:hover {
+  border-radius: 8%;
+  box-shadow: .8px .8px .8px .8px rgba(16, 36, 94, 0.2);
+}

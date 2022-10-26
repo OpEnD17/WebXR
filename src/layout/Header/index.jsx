@@ -2,18 +2,18 @@ import InputBox from '../../component/inputBox';
 
 import './index.css';
 
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 
-const Header = props => {
-
-
+const Header = () => {
     return (
         <div>
             <div className='header-left-description'>
                 <div className='header-title'>
                     WebXR based Video Conferencing
                 </div>
-                <div className='header-title'>
+                <div className='header-title' onClick={
+                    // window.location.href="https://meet.jit.si/HumorousIntakesProvideObjectively"
+                    console.log("1111111111")
+                }>
                     Start and join meetings for free
                 </div>
                 <div className='header-subtitle'>
@@ -21,10 +21,10 @@ const Header = props => {
                 </div>
                 <InputBox />
             </div>
-
+{/* 
             <div className="icon-container">
                 <SettingsOutlinedIcon className='icon-center'/>
-            </div>
+            </div> */}
         </div>
     )
 };

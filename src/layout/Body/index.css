@@ -1,0 +1,18 @@
+.time-wrapper {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 200px;
+  background: #fdfdfd;
+}
+
+.calender {
+  border: none;
+  box-shadow: 0 30px 40px 0 rgba(250, 251, 253, 0.2);
+}
+
+.clock-wrapper {
+  display: flex;
+  align-items: center;
+  background: #fdfdfd;
+}
+
