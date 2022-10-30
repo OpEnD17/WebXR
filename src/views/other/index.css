@@ -3,3 +3,26 @@
   overflow: hidden;
   background: #f6f6f8;
 }
+.other_content{
+  display: flex;
+  width: 100%;
+  padding: 30px;
+  background-color: #b4b4b4;
+}
+.c_left{
+  width: 200px;
+  border-right: 1px solid #e5e5e5;
+}
+.c_left >div{
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+.c_right{
+  flex: 1;
+  margin-left: 50px;
+}
+.c_right p{
+  color: #333;
+  line-height: 3em;
+  font-family: PingFangSC-Light, PingFangSC-Regular, SourceHanSansCN-Normal, "Source Han Sans CN", "Microsoft YaHei", "微软雅黑", "Microsoft YaHei UI", Helvetica, Tahoma, Arial, sans-serif;
+}

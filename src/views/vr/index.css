@@ -14,3 +14,17 @@
     padding: 40px;
     background-color:rgba(250, 251, 253, 0.2);
 }
+
+
+.vr_content{
+    background-color: #b4b4b4;
+    margin-bottom: 20px;
+}
+.vr_item{
+    padding: 30px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.vr_h3{
+    margin-bottom: 20px;
+}

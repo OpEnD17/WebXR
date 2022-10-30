@@ -9,9 +9,8 @@ import './index.css';
 const Body = () => {
     return (
         <div>
-
-            <div className='time-wrapper'>
-                <div>
+            <div className='wrapper'>
+                <div className='time-wrapper'>
                     <Calendar className={'calender'} />
                 </div>
                 <div className='clock-wrapper'>

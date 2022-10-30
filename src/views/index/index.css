@@ -1,7 +1,7 @@
 .header-container {
     height: 400px;
     width: 100%;
-    background:url(../../../image/headerBG.jpg);
+    background:url('https://web-cdn.jitsi.net/meetjitsi_6733.3495/images/welcome-background.png');
     background-repeat: no-repeat;
     background-size: cover;
     -webkit-background-size: cover;

@@ -20,6 +20,9 @@ a{
   text-decoration: none; /* 去除默认的下划线 */
   color: #fff;    /* 去除默认的颜色和点击后变化的颜色 */ 
 }
+a:hover{
+  background-color:#535353;
+}
 .nav-right > a {
   padding: 20px;
   cursor: pointer;
