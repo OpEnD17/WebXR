@@ -25,7 +25,7 @@ import React, { createRef, useEffect, useRef } from "react";
 
 const AframeTest = () => {
 
-    const r_container = createRef();
+    const container = createRef();
     const JitsiMeetJS = window.JitsiMeetJS;
     let room;
     let connection;
@@ -53,8 +53,9 @@ const AframeTest = () => {
                     width: 450,
                     height: 300
                 });
-                // l_container.current?.append(video);
+                container.current?.append(video);
                 localTracks[i].attach(video);
+                document.getElementById("localScreen").setAttribute("src", "#localVideo" + i);
             } else {
                 cleanupDOM("localAudio" + i);
                 const audio = create('audio', {
@@ -62,7 +63,7 @@ const AframeTest = () => {
                     id: 'localAudio' + i,
                     muted: false
                 });
-                // l_container.current?.append(audio);
+                container.current?.append(audio);
                 localTracks[i].attach(audio);
             }
         }
@@ -86,7 +87,7 @@ const AframeTest = () => {
                 width: 450,
                 height: 300
             });
-            r_container.current?.append(video);
+            container.current?.append(video);
             console.log(videoArray.current)
             for (let i = 0; i < videoArray.current.length; i++) {
                 if (videoArray.current[i]) {
@@ -103,7 +104,7 @@ const AframeTest = () => {
                 autoplay: '1',
                 id: participant + 'audio'
             });
-            r_container.current?.append(audio);
+            container.current?.append(audio);
             track.attach(audio);
         }
     }
@@ -229,10 +230,11 @@ const AframeTest = () => {
                 <a-box data-brackets-id="514" color="#AA0000" depth="0.2" height="0.7" width="5" material="" geometry="" position="-1.0 0.35 1.5"></a-box>
                 <a-box data-brackets-id="202" color="#AA0000" depth="0.1" height="2.4" width="5.5" rotation="90 0 0" position="-1.0 0.73905 1.5" material="" geometry="depth: 0.1; height: 1"></a-box>
                 {/* <!--environment light--> */}
-                <a-asset id="asset-container" ref={r_container}>
+                <a-asset id="asset-container" ref={container}>
                     <video id="video" />
                 </a-asset>
 
+                <a-video id="localScreen" data-brackets-id="644" src="#video" position="-3.5 1.12 1.5" material="" geometry="width: 0.8; height: 0.47" rotation="30 90 0" />
                 <a-video id="screen0" data-brackets-id="644" src="#video" position="3.5 2 2.7" material="" geometry="width: 2; height: 1.5; segmentsWidth: 2" rotation="0 90 0" />
                 <a-video id="screen1" data-brackets-id="644" src="#video" position="3.5 2 0.4" material="" geometry="width: 2.3; height: 1.5" rotation="0 90 0" />
                 <a-video id="screen2" data-brackets-id="644" src="#video" position="3.1 2 4.5" material="" geometry="width: 1.6; height: 1.5" rotation="0 60 0" />
