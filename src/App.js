@@ -1,6 +1,6 @@
 import Layout from "./layout";
-import AframeTest from "./Views/aframe";
-import Join from "./Views/join";
+import AframeTest from "./views/aframe";
+import Join from "./views/join";
 
 import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";

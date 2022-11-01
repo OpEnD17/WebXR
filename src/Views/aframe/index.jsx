@@ -57,14 +57,14 @@ const AframeTest = () => {
                 localTracks[i].attach(video);
                 document.getElementById("localScreen").setAttribute("src", "#localVideo" + i);
             } else {
-                cleanupDOM("localAudio" + i);
-                const audio = create('audio', {
-                    autoplay: '1',
-                    id: 'localAudio' + i,
-                    muted: false
-                });
-                container.current?.append(audio);
-                localTracks[i].attach(audio);
+                // cleanupDOM("localAudio" + i);
+                // const audio = create('audio', {
+                //     autoplay: '1',
+                //     id: 'localAudio' + i,
+                //     muted: false
+                // });
+                // container.current?.append(audio);
+                // localTracks[i].attach(audio);
             }
         }
     };
@@ -96,7 +96,6 @@ const AframeTest = () => {
                     break;
                 }
             }
-
             track.attach(video);
         } else {
             cleanupDOM(participant + 'audio');
