@@ -3,7 +3,7 @@ import AframeTest from "./views/aframe";
 import Join from "./views/join";
 
 import "./App.css";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 
 function App() {
 
@@ -12,7 +12,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}></Route>
         <Route path="/conference" element={<Join />}></Route>
-        <Route path="/aframe" element={<AframeTest />}></Route>
+        <Route path="/vr" element={<AframeTest />}></Route>
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
   );

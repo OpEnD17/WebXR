@@ -3,29 +3,29 @@ import { create, cleanupDOM } from "../../tool/tools.ts";
 
 import { Scene } from "aframe-react";
 import "aframe";
-import React, { createRef, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 
 
-// window.AFRAME.registerComponent('play', {
-//     init: function () {
-//         var myEL = document.querySelector("#yellow");
-//         this.el.addEventListener('click', function () {
-//             myEL.components.sound.playSound();
-//         });
-//     }
-// });
-// window.AFRAME.registerComponent('stop', {
-//     init: function () {
-//         var myEL = document.querySelector("#yellow");
-//         this.el.addEventListener('click', function () {
-//             myEL.components.sound.stopSound();
-//         });
-//     }
-// });
+window.AFRAME.registerComponent('play', {
+    init: function () {
+        var myEL = document.querySelector("#yellow");
+        this.el.addEventListener('click', function () {
+            myEL.components.sound.playSound();
+        });
+    }
+});
+window.AFRAME.registerComponent('stop', {
+    init: function () {
+        var myEL = document.querySelector("#yellow");
+        this.el.addEventListener('click', function () {
+            myEL.components.sound.stopSound();
+        });
+    }
+});
 
 const AframeTest = () => {
 
-    const container = createRef();
+    const container = useRef();
     const JitsiMeetJS = window.JitsiMeetJS;
     let room;
     let connection;
@@ -35,8 +35,8 @@ const AframeTest = () => {
     const videoArray = useRef();
 
     useEffect(() => {
-        videoArray.current = new Array(document.getElementsByTagName("a-video").length).fill(true);
-    }, [])
+        videoArray.current = new Array(document.getElementsByTagName("a-video").length - 1).fill(true);
+    }, []);
 
     const onLocalTracks = tracks => {
         console.log('**************local tracks**************');
@@ -138,7 +138,7 @@ const AframeTest = () => {
     const onUserJoined = id => {
         console.log(`User ${id} Joined!`);
         participantIds.add(id);
-        room.selectParticipants(Array.from(participantIds));
+        // room.selectParticipants(Array.from(participantIds));
     }
 
     const onUserLeft = id => {
@@ -150,14 +150,14 @@ const AframeTest = () => {
         const aVideoSets = document.getElementsByTagName("a-video");
         console.log(aVideoSets);
         for (const i in aVideoSets) {
-
             if (aVideoSets[i].getAttribute("src") === `#${id}video`) {
+                console.log(aVideoSets[i]);
                 aVideoSets[i].setAttribute("src", "#video");
                 videoArray.current[i] = true;
                 break;
             }
         }
-        room.selectParticipants(Array.from(participantIds));
+        // room.selectParticipants(Array.from(participantIds));
     }
 
     const onConnectionSuccess = () => {

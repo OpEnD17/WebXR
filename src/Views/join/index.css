@@ -1,0 +1,75 @@
+.conference-container{
+    display: flex;
+    height: 100%;
+}
+
+.remoteVideo{
+    border: 3px solid red;
+}
+
+.localVideo{
+    border: 3px solid green;
+}
+
+.videoTrack:hover{
+    cursor: pointer;
+}
+
+.videoTrack{
+    padding: 10px;
+    border-radius: 10px;
+    margin: 10px 0;
+    transform: rotateY(180deg);
+}
+
+.track-container{
+    background-color: rgb(26, 26, 26);
+    height: 100%;
+    overflow: auto;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-left: 10px solid gray;
+}
+
+.largeVideo-container{
+    width: 75%;
+    height: 100%;
+    background-color: rgb(26, 26, 26);
+    display: flex;
+    flex-direction: column;
+}
+
+.large-video{
+    width: 100%;
+    transform: rotateY(180deg);
+}
+
+.tool-bar{
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.leave-button{
+    color: white;
+    background-color: rgb(255, 75, 75);
+    height: 30px;
+    width: 120px;
+    border-radius: 10px;
+    font-size: 25px;
+    text-align: center;
+    line-height: 30px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-weight: bolder;
+}
+
+.leave-button:hover{
+    cursor: pointer;
+    background-color: rgb(170, 43, 43);
+    box-shadow: 2px;
+}
+
