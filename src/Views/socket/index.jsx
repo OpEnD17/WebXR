@@ -1,5 +1,3 @@
-import { socket } from "socket.io";
-
 const Chat = () => {
 
 };

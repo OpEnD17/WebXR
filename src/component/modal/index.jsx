@@ -10,7 +10,7 @@ const Modal = props => {
     }
 
     const enableScroll = () => {
-        document.body.style.overflow = 'auto';
+        document.body.style.overflow = 'scroll';
     }
 
     const stopCamera = () => {
@@ -33,15 +33,15 @@ const Modal = props => {
     }
 
     const handleCancel = () => {
+        enableScroll();
         props.setVisible(false);
         stopCamera();
-        enableScroll();
     }
 
     const handleOk = () => {
+        enableScroll();
         props.setVisible(false);
         stopCamera();
-        enableScroll();
     }
 
     return (
