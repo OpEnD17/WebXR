@@ -1,16 +1,16 @@
 const options = {
     "hosts": {
-        "domain": "sp5-15.onavstack.net",
-        "muc": "conference.sp5-15.onavstack.net",
-        "focus": "focus.sp5-15.onavstack.net"
+        "domain": "8x8.vc",
+        "focus": "focus.8x8.vc",
+        "muc": "conference.vpaas-magic-cookie-1c35e0eb9e54413a9f4f43797eccb55a.8x8.vc"
     },
-    "hiddenDomain": "hidden-services.sp5-15.onavstack.net",
-    "websocket": "wss://sp5-15.onavstack.net/xmpp-sin/xmpp-websocket",
-    "serviceUrl": "wss://sp5-15.onavstack.net/xmpp-sin/xmpp-websocket",
-    "bosh": "https://sp5-15.onavstack.net/xmpp-sin/http-bind",
-    "websocketKeepAlive": -1,
+    "hiddenDomain": "recorder.8x8.vc",
+    "websocket": "wss://8x8.vc/vpaas-magic-cookie-1c35e0eb9e54413a9f4f43797eccb55a/xmpp-websocket",
+    "serviceUrl": "wss://8x8.vc/vpaas-magic-cookie-1c35e0eb9e54413a9f4f43797eccb55a/xmpp-websocket?room=group15",
+    "bosh": "//8x8.vc/vpaas-magic-cookie-1c35e0eb9e54413a9f4f43797eccb55a/http-bind",
+    "websocketKeepAlive": "https://8x8.vc/vpaas-magic-cookie-1c35e0eb9e54413a9f4f43797eccb55a/_unlock?room=group15",
     "openBridgeChannel": "websocket",
-    "resolution": 720,
+    // "resolution": 720,
     "constraints": {
         "video": {
             "frameRate": 30,
@@ -35,29 +35,26 @@ const options = {
         "enabled": true,
         "useStunTurn": true,
         "enableUnifiedOnChrome": true,
-        "stunServers": [
-            {
-                "urls": "stun:turn.avstack.net:443"
-            }
-        ],
-        "preferredCodec": "VP8"
+        "preferredCodec": "VP9",
+        "disabledCodec": "H264"
     },
     "e2eping": {
-        "pingInterval": -1
+        "enabled": false
     },
     "deploymentInfo": {
-        "userRegion": "sin",
-        "environment": "avstack",
+        "backendRelease": "3792",
+        "crossRegion": 0,
+        "shard": "prod-8x8-ap-sydney-1-s48",
+        "userRegion": "ap-southeast-2",
+        "environment": "prod-8x8",
         "releaseNumber": "7830"
     },
     "testing": {
-        "enableThumbnailReordering": true,
-        "mobileXmppWsThreshold": 100,
         "setScreenSharingResolutionConstraints": true
     },
     "flags": {
-        "sourceNameSignaling": false,
-        "sendMultipleVideoStreams": false,
+        "sourceNameSignaling": true,
+        "sendMultipleVideoStreams": true,
         "receiveMultipleVideoStreams": true
     },
     "disableModeratorIndicator": false,
@@ -78,51 +75,28 @@ const options = {
     "useNewBandwidthAllocationStrategy": true,
     "enableUnifiedOnChrome": true,
     "videoQuality": {
-        "preferredCodec": "VP8",
-        "enforcePreferredCodec": false,
+        "disabledCodec": "H264",
+        "preferredCodec": "VP09",
         "maxBitratesVideo": {
-            "low": 200000,
-            "standard": 500000,
-            "high": 1500000,
-            "H264": {
-                "low": 200000,
-                "standard": 500000,
-                "high": 1500000
-            },
             "VP8": {
                 "low": 200000,
                 "standard": 500000,
                 "high": 1500000
             },
             "VP9": {
-                "low": 200000,
-                "standard": 500000,
+                "low": 100000,
+                "standard": 300000,
                 "high": 1500000
             }
         },
         "minHeightForQualityLvl": {
             "540": "high",
             "240": "standard"
-        },
-        "resizeDesktopForPresenter": false
-    },
-    "startBitrate": "800",
-    "audioQuality": {
-        "stereo": false,
-        "opusMaxAverageBitrate": null
+        }
     },
     "disableAudioLevels": true,
     "audioLevelsInterval": 200,
     "stereo": false,
-    "disableAEC": false,
-    "disableAGC": false,
-    "disableAP": false,
-    "disableHPF": false,
-    "disableNS": false,
-    "desktopSharingFrameRate": {
-        "min": 5,
-        "max": 5
-    },
     "forceJVB121Ratio": -1,
     "disableFilmstripAutohiding": false,
     "requireDisplayName": false,
@@ -233,17 +207,13 @@ const options = {
         "matomoEndpoint": null,
         "matomoSiteID": null,
         "rtcstatsEnabled": false,
-        "rtcstatsEndpoint": "wss://sp5-15.onavstack.net/rtcstats",
-        "rtcstatsPollInterval": 30000,
+        "rtcstatsEndpoint": "wss://rtcstats-server-8x8.jitsi.net/",
+        "rtcstatsPollInterval": 10000,
         "rtcstatsSendSdp": false
     },
     "callStatsID": null,
     "callStatsSecret": null,
     "feedbackPercentage": null,
-    "gravatar": {
-        "disabled": false,
-        "baseUrl": "https://www.gravatar.com/avatar/"
-    },
     "presenterCameraPosition": "bottom-right"
 };
 

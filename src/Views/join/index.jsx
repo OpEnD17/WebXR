@@ -2,10 +2,12 @@ import "./index.css";
 
 import options from "../../tool/options";
 import { cleanupDOM, create } from '../../tool/tools.ts';
+import token from "../../tool/token";
 
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useSearchParams } from "react-router-dom";
+
 
 const Join = props => {
 
@@ -21,10 +23,7 @@ const Join = props => {
     const [searchParams] = useSearchParams();
     const [large, setLarge] = useState();
 
-    const onlocalTracks = tracks => {
-        // console.log('**************local tracks**************');
-        // console.log(tracks);
-
+    const onLocalTracks = tracks => {
         for (const track of tracks) {
             localTracks.current.push(track);
         }
@@ -49,16 +48,17 @@ const Join = props => {
                 localTracks.current[i].attach(video);
                 console.log(localTracks.current[i]);
                 setLarge(localTracks.current[i]);
-            } else {
-                // cleanupDOM("localAudio" + i);
-                // const audio = create('audio', {
-                //     autoplay: '1',
-                //     id: 'localAudio' + i,
-                //     muted: false
-                // });
-                // l_container.current?.append(audio);
-                // localTracks.current[i].attach(audio);
-            }
+            } 
+            // else {
+            //     cleanupDOM("localAudio" + i);
+            //     const audio = create('audio', {
+            //         autoplay: '1',
+            //         id: 'localAudio' + i,
+            //         muted: false
+            //     });
+            //     l_container.current?.append(audio);
+            //     localTracks.current[i].attach(audio);
+            // }
         }
     };
 
@@ -146,7 +146,6 @@ const Join = props => {
         // room.current.selectParticipants(Array.from(participantIds));
     };
 
-    // sp5-group15
     const onConnectionSuccess = () => {
         console.log('connect seccuess');
         room.current = connection.current.initJitsiConference(searchParams.get('room'), {});
@@ -166,12 +165,12 @@ const Join = props => {
 
     const connect = async () => {
         JitsiMeetJS.init();
-        connection.current = new JitsiMeetJS.JitsiConnection(null, null, options);
+        connection.current = new JitsiMeetJS.JitsiConnection(null, token, options);
         JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         const tracks = await JitsiMeetJS.createLocalTracks({
             devices: ['audio', 'video']
         });
-        onlocalTracks(tracks);
+        onLocalTracks(tracks);
         console.log(connection);
         connection.current.addEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
         connection.current.addEventListener(JitsiMeetJS.events.connection.CONNECTION_FAILED, onConnectionFailed);

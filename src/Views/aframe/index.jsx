@@ -1,9 +1,11 @@
 import options from "../../tool/options";
 import { create, cleanupDOM } from "../../tool/tools.ts";
+import token from "../../tool/token";
 
-import { Scene } from "aframe-react";
+import { Entity, Scene } from "aframe-react";
 import "aframe";
 import React, { useEffect, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
 
 
 window.AFRAME.registerComponent('play', {
@@ -31,6 +33,7 @@ const AframeTest = () => {
     let connection;
     const localTracks = [];
     const remoteTracks = {};
+    const [searchParams] = useSearchParams();
     const participantIds = new Set();
     const videoArray = useRef();
 
@@ -56,16 +59,17 @@ const AframeTest = () => {
                 container.current?.append(video);
                 localTracks[i].attach(video);
                 document.getElementById("localScreen").setAttribute("src", "#localVideo" + i);
-            } else {
-                // cleanupDOM("localAudio" + i);
-                // const audio = create('audio', {
-                //     autoplay: '1',
-                //     id: 'localAudio' + i,
-                //     muted: false
-                // });
-                // container.current?.append(audio);
-                // localTracks[i].attach(audio);
-            }
+            } 
+            // else {
+            //     cleanupDOM("localAudio" + i);
+            //     const audio = create('audio', {
+            //         autoplay: '1',
+            //         id: 'localAudio' + i,
+            //         muted: false
+            //     });
+            //     container.current?.append(audio);
+            //     localTracks[i].attach(audio);
+            // }
         }
     };
 
@@ -157,12 +161,11 @@ const AframeTest = () => {
                 break;
             }
         }
-        // room.selectParticipants(Array.from(participantIds));
     }
 
     const onConnectionSuccess = () => {
         console.log('connect seccuess');
-        room = connection.initJitsiConference('sp5-group15', {});
+        room = connection.initJitsiConference(searchParams.get('room'), {});
         console.log("***********room**************")
         console.log(room);
         for (let i = 0; i < localTracks.length; i++) {
@@ -179,7 +182,7 @@ const AframeTest = () => {
 
     const connect = async () => {
         JitsiMeetJS.init();
-        connection = new JitsiMeetJS.JitsiConnection(null, null, options);
+        connection = new JitsiMeetJS.JitsiConnection(null, token, options);
         JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         const tracks = await JitsiMeetJS.createLocalTracks({
             devices: ['audio', 'video']
@@ -210,7 +213,13 @@ const AframeTest = () => {
         })
     };
 
-    connect();
+    useEffect(()=>{
+        return () => hangup();
+    })
+
+    useEffect(() => {
+        connect();
+    }, []);
 
     return (
         <div>
@@ -229,9 +238,10 @@ const AframeTest = () => {
                 <a-box data-brackets-id="514" color="#AA0000" depth="0.2" height="0.7" width="5" material="" geometry="" position="-1.0 0.35 1.5"></a-box>
                 <a-box data-brackets-id="202" color="#AA0000" depth="0.1" height="2.4" width="5.5" rotation="90 0 0" position="-1.0 0.73905 1.5" material="" geometry="depth: 0.1; height: 1"></a-box>
                 {/* <!--environment light--> */}
-                <a-asset id="asset-container" ref={container}>
+                <a-assets id="asset-container" ref={container}>
                     <video id="video" />
-                </a-asset>
+                    <img id="c" src="C.jpg" />
+                </a-assets>
 
                 <a-video id="localScreen" data-brackets-id="644" src="#video" position="-3.5 1.12 1.5" material="" geometry="width: 0.8; height: 0.47" rotation="30 90 0" />
                 <a-video id="screen0" data-brackets-id="644" src="#video" position="3.5 2 2.7" material="" geometry="width: 2; height: 1.5; segmentsWidth: 2" rotation="0 90 0" />
@@ -258,9 +268,6 @@ const AframeTest = () => {
                 <a-box data-brackets-id="1083" color="white" position="0.04123 2 7.5" material="" geometry="height: 4; width: 5.82; depth: 0.2"></a-box>
                 <a-box data-brackets-id="1637" color="white" position="-3.83305 3.75848 7.5" material="" geometry="height: 0.55; width: 1.96; depth: 0.2"></a-box>
                 <a-box data-brackets-id="1637" color="white" position="3.89924 3.75848 7.5" material="" geometry="height: 0.55; width: 1.96; depth: 0.2"></a-box>
-
-
-
 
                 <a-box data-brackets-id="303" color="white" position="-9.9 2 -5.01609" material="" geometry="height: 4; width: 0.2; depth: 9.94"></a-box>
 
@@ -290,11 +297,11 @@ const AframeTest = () => {
                 <a-entity data-brackets-id="72" gltf-model="3d_architecture__photo_frame/scene.gltf" position="1.44 1.42 -9.8" rotation="0 -90 0" scale="1 0.9 1.3"></a-entity>
 
 
-                <a-image src="O.jpg" position="0.51 1.85 -9.78" scale="0.91 1.47 1"></a-image>
+                <a-image  position="0.51 1.85 -9.78" scale="0.91 1.47 1"></a-image>
                 <a-image src="Q.jpg" position="-0.464 2.3 -9.78" scale="0.76 0.66 1"></a-image>
                 <a-image src="tooopen.jpg" position="0.52 3.041 -9.78" scale="0.84 0.58 1"></a-image>
                 <a-image src="R.jpg" position="-0.95 1.45 -9.78" scale="0.51 0.72 1"></a-image>
-                <a-image src="C.jpg" position="-0.31 1.46 -9.78" scale="0.5 0.75 1"></a-image>
+                <a-image src="#c" position="-0.31 1.46 -9.78" scale="0.5 0.75 1"></a-image>
                 <a-image src="a.jpg" position="1.35 2.24 -9.78" scale="0.49 0.74 1"></a-image>
                 <a-image src="b.jpg" position="1.44 1.42 -9.78" scale="0.64 0.66 1"></a-image>
                 {/* <!--room--> */}
@@ -385,13 +392,13 @@ const AframeTest = () => {
                 <a-entity data-brackets-id="203" gltf-model="coffee_shop_cup/scene.gltf" position="-2.2 0.8 0.55" scale="0.25 0.25 0.25"></a-entity>
                 {/* <!--screen--> */}
 
-                {/* <a-entity data-brackets-id="743" gltf-model="benq_screen/scene.gltf" position="0.4 0.79 2.25" scale="0.005 0.005 0.005" rotation="0 206 0"></a-entity>
+                <a-entity data-brackets-id="743" gltf-model="benq_screen/scene.gltf" position="0.4 0.79 2.25" scale="0.005 0.005 0.005" rotation="0 206 0"></a-entity>
                 <a-entity data-brackets-id="743" gltf-model="benq_screen/scene.gltf" position="-1.2 0.79 2.25" scale="0.005 0.005 0.005" rotation="0 206 0"></a-entity>
                 <a-entity data-brackets-id="743" gltf-model="benq_screen/scene.gltf" position="-2.8 0.79 2.25" scale="0.005 0.005 0.005" rotation="0 206 0"></a-entity>
                 <a-entity data-brackets-id="743" gltf-model="benq_screen/scene.gltf" position="-2.36 0.79 0.68" scale="0.005 0.005 0.005" rotation="0 25.76 0"></a-entity>
                 <a-entity data-brackets-id="743" gltf-model="benq_screen/scene.gltf" position="-0.76 0.79 0.68" scale="0.005 0.005 0.005" rotation="0 25.76 0"></a-entity>
                 <a-entity data-brackets-id="743" gltf-model="benq_screen/scene.gltf" position="0.84 0.79 0.68" scale="0.005 0.005 0.005" rotation="0 25.76 0"></a-entity>
-                */}
+               
             </Scene>
 
 
