@@ -1,46 +1,40 @@
 import "./index.css";
 
+import { MyContext } from "../../App";
+
+import { useRef, useContext } from 'react'
 
 const Modal = props => {
 
     let mediaCamera;
-
-    const disableScroll = () => {
-        document.body.style.overflow = 'hidden';
-    }
-
-    const enableScroll = () => {
-        document.body.style.overflow = 'scroll';
-    }
+    const appId = useRef();
+    const { handleDataChange } = useContext(MyContext);
 
     const stopCamera = () => {
         mediaCamera.getTracks()[0].stop();
     }
 
     if (props.visible) {
-        disableScroll();
         const video = document.getElementById("local-video");
         navigator.mediaDevices.getUserMedia({ video: true })
             .then(stream => {
                 video.srcObject = stream;
                 mediaCamera = stream;
             })
-            .catch(err => console.log(err));
-
-        // navigator.mediaDevices.enumerateDevices()
-        //     .then(res => console.log(res));
-
+            .catch(err => {
+                console.log(err);
+                alert("Camera not available!");
+            });
     }
 
     const handleCancel = () => {
-        enableScroll();
         props.setVisible(false);
         stopCamera();
     }
 
     const handleOk = () => {
-        enableScroll();
         props.setVisible(false);
+        handleDataChange({ appId: appId.current.value });
         stopCamera();
     }
 
@@ -52,11 +46,12 @@ const Modal = props => {
                     <video autoPlay className="modal-localVideo" id="local-video" />
                     <div className="modal-right">
                         <div>Select output:</div>
-                        <input type="radio" name="output" defaultChecked id="screen" onClick={() => props.changeTarget("/conference")}/>
+                        <input type="radio" name="output" defaultChecked id="screen" onClick={() => props.changeTarget("/conference")} />
                         <label htmlFor="screen">screen</label>
                         <br></br>
-                        <input type="radio" name="output" id="vr" onClick={() => props.changeTarget("/vr")}/>
+                        <input type="radio" name="output" id="vr" onClick={() => props.changeTarget("/webxr")} />
                         <label htmlFor="vr">VR device</label>
+                        <input type="text" placeholder="AppID" ref={appId} />
                     </div>
                 </div>
 

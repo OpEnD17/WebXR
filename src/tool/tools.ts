@@ -11,6 +11,12 @@ export const cleanupDOM = (id: string) :void => {
     element && element.remove();
 };
 
+export const removeCamera = () => {
+    navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+        stream.getVideoTracks()[0].stop();
+    });
+}
 // export const create = (name, attri) => {
 //     const ele = document.createElement(name);
 //     Object.keys(attri).forEach(key => {

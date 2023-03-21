@@ -25,7 +25,7 @@ window.AFRAME.registerComponent('stop', {
     }
 });
 
-const AframeTest = () => {
+const WebXR = () => {
 
     const container = useRef();
     const JitsiMeetJS = window.JitsiMeetJS;
@@ -36,10 +36,6 @@ const AframeTest = () => {
     const [searchParams] = useSearchParams();
     const participantIds = new Set();
     const videoArray = useRef();
-
-    useEffect(() => {
-        videoArray.current = new Array(document.getElementsByTagName("a-video").length - 1).fill(true);
-    }, []);
 
     const onLocalTracks = tracks => {
         console.log('**************local tracks**************');
@@ -59,7 +55,7 @@ const AframeTest = () => {
                 container.current?.append(video);
                 localTracks[i].attach(video);
                 document.getElementById("localScreen").setAttribute("src", "#localVideo" + i);
-            } 
+            }
             // else {
             //     cleanupDOM("localAudio" + i);
             //     const audio = create('audio', {
@@ -122,15 +118,9 @@ const AframeTest = () => {
 
     const disconnect = async () => {
         console.log('disconnect');
-        connection.removeEventListener(
-            JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED,
-            onConnectionSuccess);
-        connection.removeEventListener(
-            JitsiMeetJS.events.connection.CONNECTION_FAILED,
-            onConnectionFailed);
-        connection.removeEventListener(
-            JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED,
-            disconnect);
+        connection.removeEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED,onConnectionSuccess);
+        connection.removeEventListener(JitsiMeetJS.events.connection.CONNECTION_FAILED,onConnectionFailed);
+        connection.removeEventListener(JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED,disconnect);
 
         for (let i = 0; i < localTracks.length; i++) {
             localTracks[i].dispose();
@@ -166,7 +156,6 @@ const AframeTest = () => {
     const onConnectionSuccess = () => {
         console.log('connect seccuess');
         room = connection.initJitsiConference(searchParams.get('room'), {});
-        console.log("***********room**************")
         console.log(room);
         for (let i = 0; i < localTracks.length; i++) {
             room.addTrack(localTracks[i]);
@@ -182,7 +171,7 @@ const AframeTest = () => {
 
     const connect = async () => {
         JitsiMeetJS.init();
-        connection = new JitsiMeetJS.JitsiConnection(null, token, options);
+        connection = new JitsiMeetJS.JitsiConnection(null, token, options());
         JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         const tracks = await JitsiMeetJS.createLocalTracks({
             devices: ['audio', 'video']
@@ -213,12 +202,10 @@ const AframeTest = () => {
         })
     };
 
-    useEffect(()=>{
-        return () => hangup();
-    })
-
     useEffect(() => {
         connect();
+        videoArray.current = new Array(document.getElementsByTagName("a-video").length - 1).fill(true);
+        return () => hangup();
     }, []);
 
     return (
@@ -407,4 +394,4 @@ const AframeTest = () => {
 }
 //};
 
-export default AframeTest;
+export default WebXR;

@@ -1,2 +1,54 @@
-const token = "eyJraWQiOiJ2cGFhcy1tYWdpYy1jb29raWUtMWMzNWUwZWI5ZTU0NDEzYTlmNGY0Mzc5N2VjY2I1NWEvN2VmM2NhLVBVQkxJQ19BQ0NFU1MiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJqaXRzaSIsImlzcyI6ImNoYXQiLCJpYXQiOjE2Nzg5MzYwNjcsImV4cCI6MTY3ODk0MzI2NywibmJmIjoxNjc4OTM2MDYyLCJzdWIiOiJ2cGFhcy1tYWdpYy1jb29raWUtMWMzNWUwZWI5ZTU0NDEzYTlmNGY0Mzc5N2VjY2I1NWEiLCJjb250ZXh0Ijp7ImZlYXR1cmVzIjp7ImxpdmVzdHJlYW1pbmciOmZhbHNlLCJvdXRib3VuZC1jYWxsIjpmYWxzZSwic2lwLW91dGJvdW5kLWNhbGwiOmZhbHNlLCJ0cmFuc2NyaXB0aW9uIjpmYWxzZSwicmVjb3JkaW5nIjpmYWxzZX0sInVzZXIiOnsiaGlkZGVuLWZyb20tcmVjb3JkZXIiOmZhbHNlLCJtb2RlcmF0b3IiOmZhbHNlLCJuYW1lIjoiIiwiaWQiOiI2YjM3ZDk0MzdjNTc0NjdkYjRhMGFkNzUxY2RmM2NjZiIsImF2YXRhciI6IiIsImVtYWlsIjoiIn19LCJyb29tIjoiKiJ9.XwXv-PJA-XBEohDBZZJIPXDsIvOh2WHdShLFdVAUL2PWnE0tiC5Xv3XPeReZrOwZOH0xyODk7ZjOc6s_PHiC8AIwD_-mB0lNzAyGRaub9IVD1Dnig0ckoIFuTQQjy25LRQ_M8vUBCqUAOmAaDbZZ0uULM2P5tXeOGY9pAGAOZGkXC4ztZjDza3vrmhtKLoCmD-2rTgXEwkAPNZb9jcJqFB-pAvGwIs43HEjy1aWmbiFpoIsUgq7cjN4VX2L2CsKU2Tmpg5-SLwuAcJfAFbYGb7Z-4EKs_3x5Z_EbkgQ-m8gH-z-IGW6rXHfXWbdNGp9Tztj7i27KAXZjnpxj5MdWxA";
+const token = "eyJraWQiOiJ2cGFhcy1tYWdpYy1jb29raWUtMWMzNWUwZWI5ZTU0NDEzYTlmNGY0Mzc5N2VjY2I1NWEvMjZkMjBmLVNBTVBMRV9BUFAiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJqaXRzaSIsImlzcyI6ImNoYXQiLCJpYXQiOjE2NzkzMTcwNjQsImV4cCI6MTY3OTMyNDI2NCwibmJmIjoxNjc5MzE3MDU5LCJzdWIiOiJ2cGFhcy1tYWdpYy1jb29raWUtMWMzNWUwZWI5ZTU0NDEzYTlmNGY0Mzc5N2VjY2I1NWEiLCJjb250ZXh0Ijp7ImZlYXR1cmVzIjp7ImxpdmVzdHJlYW1pbmciOnRydWUsIm91dGJvdW5kLWNhbGwiOnRydWUsInNpcC1vdXRib3VuZC1jYWxsIjpmYWxzZSwidHJhbnNjcmlwdGlvbiI6dHJ1ZSwicmVjb3JkaW5nIjp0cnVlfSwidXNlciI6eyJoaWRkZW4tZnJvbS1yZWNvcmRlciI6ZmFsc2UsIm1vZGVyYXRvciI6dHJ1ZSwibmFtZSI6IiIsImlkIjoiIiwiYXZhdGFyIjoiIiwiZW1haWwiOiIifX0sInJvb20iOiIqIn0.AaN6y_wD9I-FC7qlhaFrSO_Em49ytLgj7kJkwjYJwW-5vl-TsA84FUASfF_Vy2dFPkZMpMSXAgRWBqddhCHRXbj_1u1mmC5cVzNgImnFsZDuIesIZOOyQpWSgu7Edi71W9VxGpni3STR2_e9DnxU2k5c4AKI0MavsP6UgvDhHZMJl7EN1zP7rDB4beUvDmyZ2lrI-MbhZjck1LYM39aYfy7Jn9ZKd4Krt00PrdWai1m0TdJGHoB9WO-V1T2V5Gp9WDaU2NbFoEShMesfDr8wILUZJ_AM56RxdxiSACq4aqoP3uVQIMSAQ8375VMvPmqpjZzhQRU0C9EFL6ViBvWofA"
+
 export default token;
+
+// var jsonwebtoken = require('jsonwebtoken');
+// var uuid = require('uuid-random');
+
+/**
+ * Function generates a JaaS JWT.
+ */
+// const generate = (privateKey, { id, name, email, avatar, appId, kid }) => {
+//   const now = new Date()
+//   const jwt = jsonwebtoken.sign({
+//     aud: 'jitsi',
+//     context: {
+//       user: {
+//         id,
+//         name,
+//         avatar,
+//         email: email,
+//         moderator: 'true'
+//       },
+//       features: {
+//         livestreaming: 'true',
+//         recording: 'true',
+//         transcription: 'true',
+//         "outbound-call": 'true'
+//       }
+//     },
+//     iss: 'chat',
+//     room: '*',
+//     sub: appId,
+//     exp: Math.round(now.setHours(now.getHours() + 3) / 1000),
+//     nbf: (Math.round((new Date).getTime() / 1000) - 10)
+//   }, privateKey, { algorithm: 'RS256', header: { kid } })
+//   return jwt;
+// }
+
+// /**
+//  * Generate a new JWT.
+//  */
+// const t = generate('my private key', {
+//     id: uuid(),
+//     name: "my user name",
+//     email: "my user email",
+//     avatar: "my avatar url",
+//     appId: "my AppID", // Your AppID ( previously tenant )
+//     kid: "my api key"
+// });
+
+// console.log(token);
+
+
+

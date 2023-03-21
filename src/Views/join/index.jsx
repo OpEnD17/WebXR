@@ -1,7 +1,7 @@
 import "./index.css";
 
 import options from "../../tool/options";
-import { cleanupDOM, create } from '../../tool/tools.ts';
+import { cleanupDOM, create, removeCamera } from '../../tool/tools.ts';
 import token from "../../tool/token";
 
 import { useRef, useState, useEffect } from "react";
@@ -11,6 +11,7 @@ import { useSearchParams } from "react-router-dom";
 
 const Join = props => {
 
+    console.log(props.data)
     const JitsiMeetJS = window.JitsiMeetJS;
     const track_container = useRef();
     const largeVideo = useRef();
@@ -48,7 +49,7 @@ const Join = props => {
                 localTracks.current[i].attach(video);
                 console.log(localTracks.current[i]);
                 setLarge(localTracks.current[i]);
-            } 
+            }
             // else {
             //     cleanupDOM("localAudio" + i);
             //     const audio = create('audio', {
@@ -71,7 +72,6 @@ const Join = props => {
             remoteTracks.current[participant] = [];
         }
 
-        // console.log(remoteTracks.current[participant].push(track));
         if (track.getType() === 'video') {
             cleanupDOM(participant + 'video');
             const func = () => {
@@ -114,15 +114,9 @@ const Join = props => {
 
     const disconnect = async () => {
         console.log(connection);
-        connection.current.removeEventListener(
-            JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED,
-            onConnectionSuccess);
-        connection.current.removeEventListener(
-            JitsiMeetJS.events.connection.CONNECTION_FAILED,
-            onConnectionFailed);
-        connection.current.removeEventListener(
-            JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED,
-            disconnect);
+        connection.current.removeEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
+        connection.current.removeEventListener(JitsiMeetJS.events.connection.CONNECTION_FAILED, onConnectionFailed);
+        connection.current.removeEventListener(JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED, disconnect);
 
         for (let i = 0; i < localTracks.current.length; i++) {
             localTracks.current[i].dispose();
@@ -165,7 +159,7 @@ const Join = props => {
 
     const connect = async () => {
         JitsiMeetJS.init();
-        connection.current = new JitsiMeetJS.JitsiConnection(null, token, options);
+        connection.current = new JitsiMeetJS.JitsiConnection(null, token, options());
         JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         const tracks = await JitsiMeetJS.createLocalTracks({
             devices: ['audio', 'video']
@@ -183,6 +177,7 @@ const Join = props => {
         removeRemoteTracks();
         room.current && await room.current.leave();
         navigate("/");
+        // removeCamera();
     };
 
     const removeRemoteTracks = () => {

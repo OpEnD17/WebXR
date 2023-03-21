@@ -12,7 +12,6 @@ const InputBox = props => {
     });
 
     return (
-
         <div className='inputBox-container'>
             <input
                 className='input'
@@ -33,8 +32,6 @@ const InputBox = props => {
                 Start meeting
             </div>
         </div>
-
-
     )
 };
 
