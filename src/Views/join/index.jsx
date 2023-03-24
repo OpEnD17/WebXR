@@ -1,17 +1,15 @@
 import "./index.css";
 
-import options from "../../tool/options";
-import { cleanupDOM, create, removeCamera } from '../../tool/tools.ts';
+import { cleanupDOM, createDOM, buildOptions } from '../../tool/tools.ts';
 import token from "../../tool/token";
 
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useSearchParams } from "react-router-dom";
 
-
 const Join = props => {
 
-    console.log(props.data)
+    const { appId } = props.data;
     const JitsiMeetJS = window.JitsiMeetJS;
     const track_container = useRef();
     const largeVideo = useRef();
@@ -37,7 +35,7 @@ const Join = props => {
                     // large.detach(largeVideo.current);
                     setLarge(localTracks.current[i]);
                 }
-                const video = create('video', {
+                const video = createDOM('video', {
                     autoplay: '1',
                     id: 'localVideo' + i,
                     width: 300,
@@ -52,7 +50,7 @@ const Join = props => {
             }
             // else {
             //     cleanupDOM("localAudio" + i);
-            //     const audio = create('audio', {
+            //     const audio = createDOM('audio', {
             //         autoplay: '1',
             //         id: 'localAudio' + i,
             //         muted: false
@@ -79,7 +77,7 @@ const Join = props => {
                 // large.detach(largeVideo.current);
                 setLarge(track);
             }
-            const video = create('video', {
+            const video = createDOM('video', {
                 autoplay: '1',
                 id: participant + 'video',
                 width: 300,
@@ -95,7 +93,7 @@ const Join = props => {
             track.attach(video);
         } else {
             cleanupDOM(participant + 'audio');
-            const audio = create('audio', {
+            const audio = createDOM('audio', {
                 autoplay: '1',
                 id: participant + 'audio'
             });
@@ -154,12 +152,14 @@ const Join = props => {
         room.current.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, onConferenceJoined);
         room.current.on(JitsiMeetJS.events.conference.USER_JOINED, onUserJoined);
         room.current.on(JitsiMeetJS.events.conference.USER_LEFT, onUserLeft);
+        room.current.on(JitsiMeetJS.events.conference.ENDPOINT_MESSAGE_RECEIVED, getPosition);
+        
         room.current.join();
     };
 
     const connect = async () => {
         JitsiMeetJS.init();
-        connection.current = new JitsiMeetJS.JitsiConnection(null, token, options());
+        connection.current = new JitsiMeetJS.JitsiConnection(null, token, buildOptions(appId, searchParams.get('room')));
         JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         const tracks = await JitsiMeetJS.createLocalTracks({
             devices: ['audio', 'video']
@@ -192,6 +192,19 @@ const Join = props => {
         })
     };
 
+    const sendPosition = (x, y) => {
+        console.log(`${x}, ${y}`);
+        console.log(room.current.myUserId());
+        room.current.sendMessage({
+            x,
+            y
+        }, "");
+    };
+    const getPosition = (vi ,data) => {
+        console.log(vi._id);
+        console.log(data);
+    }
+
     useEffect(() => {
         connect();
     }, []);
@@ -218,6 +231,11 @@ const Join = props => {
                     className="track-container"
                     ref={track_container}
                 >
+                </div>
+                <div onClick={() => {
+                    sendPosition(0, 0);
+                }}>
+                    send
                 </div>
             </div>
         </>

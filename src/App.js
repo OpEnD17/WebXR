@@ -4,8 +4,10 @@ import Join from "./views/join";
 import Chat from "./views/socket";
 
 import "./App.css";
+
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
+import axios from "axios";
 
 export const MyContext = createContext();
 
@@ -16,6 +18,14 @@ function App() {
     console.log(data);
     setData(data);
   };
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const result = await axios.get('http://localhost:8080/api/token?name=test');
+  //     console.log(result.data);
+  //   };
+  //   fetchData();
+  // }, []);
 
   return (
     <MyContext.Provider value={{ data, handleDataChange }} >

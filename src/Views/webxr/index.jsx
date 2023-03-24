@@ -1,5 +1,4 @@
-import options from "../../tool/options";
-import { create, cleanupDOM } from "../../tool/tools.ts";
+import { createDOM, cleanupDOM, buildOptions } from "../../tool/tools.ts";
 import token from "../../tool/token";
 
 import { Entity, Scene } from "aframe-react";
@@ -46,7 +45,7 @@ const WebXR = () => {
         for (let i in localTracks) {
             if (localTracks[i].getType() === 'video') {
                 cleanupDOM("localVideo" + i);
-                const video = create('video', {
+                const video = createDOM('video', {
                     autoplay: '1',
                     id: 'localVideo' + i,
                     width: 450,
@@ -58,7 +57,7 @@ const WebXR = () => {
             }
             // else {
             //     cleanupDOM("localAudio" + i);
-            //     const audio = create('audio', {
+            //     const audio = createDOM('audio', {
             //         autoplay: '1',
             //         id: 'localAudio' + i,
             //         muted: false
@@ -81,7 +80,7 @@ const WebXR = () => {
         console.log(remoteTracks[participant].push(track));
         if (track.getType() === 'video') {
             cleanupDOM(participant + 'video');
-            const video = create('video', {
+            const video = createDOM('video', {
                 autoplay: '1',
                 id: participant + 'video',
                 width: 450,
@@ -99,7 +98,7 @@ const WebXR = () => {
             track.attach(video);
         } else {
             cleanupDOM(participant + 'audio');
-            const audio = create('audio', {
+            const audio = createDOM('audio', {
                 autoplay: '1',
                 id: participant + 'audio'
             });
@@ -166,12 +165,13 @@ const WebXR = () => {
         room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, onConferenceJoined);
         room.on(JitsiMeetJS.events.conference.USER_JOINED, onUserJoined);
         room.on(JitsiMeetJS.events.conference.USER_LEFT, onUserLeft);
+        room.on(JitsiMeetJS.events.conference.MESSAGE_RECEIVED, getPosition);
         room.join();
     };
 
     const connect = async () => {
         JitsiMeetJS.init();
-        connection = new JitsiMeetJS.JitsiConnection(null, token, options());
+        connection = new JitsiMeetJS.JitsiConnection(null, token, buildOptions());
         JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         const tracks = await JitsiMeetJS.createLocalTracks({
             devices: ['audio', 'video']
@@ -201,6 +201,19 @@ const WebXR = () => {
             }
         })
     };
+
+    const sendPosition = (id, x, y) => {
+        console.log(`${id}, ${x}, ${y}`);
+        room.sendEndpointStatsMessage({
+            id,
+            x,
+            y
+        });
+    };
+
+    const getPosition = (p) => {
+        console.log(p);
+    }
 
     useEffect(() => {
         connect();
