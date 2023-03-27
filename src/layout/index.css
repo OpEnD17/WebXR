@@ -1,7 +1,7 @@
 .header-container {
     height: 100%;
     width: 100%;
-    background:url(../../image/unstoppable-bg.jpg);
+    background:url(../assets/image/unstoppable-bg.jpg);
     background-repeat: no-repeat;
     background-size: cover;
     -webkit-background-size: cover;

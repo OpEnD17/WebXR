@@ -42,17 +42,17 @@ const Modal = props => {
         const appId = appIdRef.current.value;
         const apiKey = apiKeyRef.current.value;
         const name = nameRef.current.value;
-        const fetchData = async () => {
-            const result = await axios.get(`http://localhost:8080/api/token?name=${name}&appId=${appId}&apiKey=${apiKey}`);
-            console.log(result.data);
-            handleDataChange({
-                appId,
-                apiKey,
-                name,
-                token: result.data
-            });
-        };
-        fetchData();
+        // const fetchData = async () => {
+        //     const result = await axios.get(`http://localhost:8080/api/token?name=${name}&appId=${appId}&apiKey=${apiKey}`);
+        //     console.log(result.data);
+        //     handleDataChange({
+        //         appId,
+        //         apiKey,
+        //         name,
+        //         token: result.data
+        //     });
+        // };
+        // fetchData();
 
         stopCamera();
     }

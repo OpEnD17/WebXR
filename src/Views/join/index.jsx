@@ -152,7 +152,7 @@ const Join = props => {
         room.current.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, onConferenceJoined);
         room.current.on(JitsiMeetJS.events.conference.USER_JOINED, onUserJoined);
         room.current.on(JitsiMeetJS.events.conference.USER_LEFT, onUserLeft);
-        room.current.on(JitsiMeetJS.events.conference.ENDPOINT_MESSAGE_RECEIVED, getPosition);
+        room.current.on(JitsiMeetJS.events.conference.ENDPOINT_MESSAGE_RECEIVED, onPositionReceived);
         
         room.current.join();
     };
@@ -200,7 +200,8 @@ const Join = props => {
             y
         }, "");
     };
-    const getPosition = (vi ,data) => {
+    
+    const onPositionReceived = (vi ,data) => {
         console.log(vi._id);
         console.log(data);
     }
@@ -232,11 +233,11 @@ const Join = props => {
                     ref={track_container}
                 >
                 </div>
-                <div onClick={() => {
+                {/* <div onClick={() => {
                     sendPosition(0, 0);
                 }}>
                     send
-                </div>
+                </div> */}
             </div>
         </>
     );

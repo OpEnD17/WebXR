@@ -1,8 +1,11 @@
 import { createDOM, cleanupDOM, buildOptions } from "../../tool/tools.ts";
 import token from "../../tool/token";
 
-import { Entity, Scene } from "aframe-react";
+import sky from "../../assets/image/sky.jpg";
 import "aframe";
+import { Entity, Scene } from "aframe-react";
+
+
 import React, { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 
@@ -224,15 +227,16 @@ const WebXR = () => {
     return (
         <div>
             <Scene>
-                <a-sky src="sky.jpg" radius="15" shadow="receive: true"></a-sky>
-                <a-plane color="#FFFFFF" src="#floor" repeat=" 60 60" rotation="-90 0 0" scale="25 25 1" shadow="receive: true" static-body></a-plane>
+                {/* <a-sky src={sky} radius="15" shadow="receive: true"></a-sky> */}
+                <Entity primitive="a-sky" radius="15" shadow="receive: true" src={sky}/>
+                <Entity primitive="a-plane" color="#FFFFFF" src="#floor" repeat=" 60 60" rotation="-90 0 0" scale="25 25 1" shadow="receive: true" static-body />
                 <a-entity progressive-controls></a-entity>
 
                 {/* <!--movement--> */}
                 <a-entity id="cam-rig" position="0 0 4">
-                    <a-camera id="head" user-height="1.6">
+                    <Entity primitive="a-camera" id="head" user-height="1.6">
                         <a-cursor></a-cursor>
-                    </a-camera>
+                    </Entity>
                 </a-entity>
 
                 <a-box data-brackets-id="514" color="#AA0000" depth="0.2" height="0.7" width="5" material="" geometry="" position="-1.0 0.35 1.5"></a-box>
@@ -317,7 +321,7 @@ const WebXR = () => {
 
                 <a-entity data-brackets-id="1560" gltf-model="indoor_plant/scene.gltf" position="9.45593 0.03259 -4.206" scale="0.2 0.2 0.2"></a-entity>
 
-                <a-entity data-brackets-id="1869" gltf-model="sofa/scene.gltf" position="9.26173 0.02537 -5.98061" scale="0.01 0.01 0.01"></a-entity>
+                <a-entity data-brackets-id="1869" gltf-model={{src: 'src/assets/sofa/scene.gltf'}} position="9.26173 0.02537 -5.98061" scale="0.01 0.01 0.01"></a-entity>
                 <a-entity data-brackets-id="1868" gltf-model="indoor_plant/scene.gltf" position="3.89412 0.03259 -4.206" scale="0.2 0.2 0.2"></a-entity>
                 {/* <!--roomlamp--> */}
                 <a-entity data-brackets-id="4334" gltf-model="moon_lamp/scene.gltf" position="2 2 -3.78" scale="0.05 0.05 0.05" rotation="-90 0 0"></a-entity>

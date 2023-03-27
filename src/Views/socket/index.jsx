@@ -1,6 +1,5 @@
 import { useRef } from "react";
 import { io } from "socket.io-client";
-// import { socket } from "../../backend/server";
 
 const Chat = () => {
 
