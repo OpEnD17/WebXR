@@ -9,8 +9,9 @@ import floor from "../../assets/image/floor.jpg";
 import React, { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 
+const aframe = window.AFRAME;
 
-window.AFRAME.registerComponent('play', {
+aframe.registerComponent('play', {
     init: function () {
         var myEL = document.querySelector("#yellow");
         this.el.addEventListener('click', function () {
@@ -18,7 +19,7 @@ window.AFRAME.registerComponent('play', {
         });
     }
 });
-window.AFRAME.registerComponent('stop', {
+aframe.registerComponent('stop', {
     init: function () {
         var myEL = document.querySelector("#yellow");
         this.el.addEventListener('click', function () {
@@ -26,10 +27,17 @@ window.AFRAME.registerComponent('stop', {
         });
     }
 });
+aframe.registerComponent('read-position', {
+    tick: function(){
+        console.log(this.el.object3D.position);
+    }
+});
 
 const WebXR = () => {
 
     const container = useRef();
+    const scene = useRef();
+    const camera = useRef();
     const JitsiMeetJS = window.JitsiMeetJS;
     let room;
     let connection;
@@ -108,15 +116,15 @@ const WebXR = () => {
             container.current?.append(audio);
             track.attach(audio);
         }
-    }
+    };
 
     const onConferenceJoined = () => {
         console.log('conference joined!');
-    }
+    };
 
     const onConnectionFailed = () => {
         console.log('connect failed');
-    }
+    };
 
     const disconnect = async () => {
         console.log('disconnect');
@@ -129,13 +137,32 @@ const WebXR = () => {
         }
 
         return await connection.disconnect();
-    }
+    };
+
+    const createADOM = id => {
+        console.log(id);
+        console.log(aframe.registerComponent);
+        // aframe.registerComponent('init', {
+        //     init: function(){
+        //         console.log(this);
+        //     },
+        // });
+        const avatarEl = document.createElement('a-box');
+        // avatarEl.setAttribute('init', '');
+        avatarEl.setAttribute('position', {x: 0, y: 0, z: 0});
+        avatarEl.setAttribute('id', id);
+        console.log(avatarEl);
+        console.log(scene.current);
+        scene.current.el.appendChild(avatarEl);
+    };
 
     const onUserJoined = id => {
         console.log(`User ${id} Joined!`);
-        participantIds.add(id);
-        // room.selectParticipants(Array.from(participantIds));
-    }
+        if(!participantIds.has(id)){
+            participantIds.add(id);
+            createADOM(id);
+        }
+    };
 
     const onUserLeft = id => {
         console.log(`User ${id} left!`);
@@ -153,7 +180,7 @@ const WebXR = () => {
                 break;
             }
         }
-    }
+    };
 
     const onConnectionSuccess = () => {
         console.log('connect seccuess');
@@ -170,6 +197,7 @@ const WebXR = () => {
         room.on(JitsiMeetJS.events.conference.USER_LEFT, onUserLeft);
         room.on(JitsiMeetJS.events.conference.MESSAGE_RECEIVED, getPosition);
         room.join();
+        createADOM();
     };
 
     const connect = async () => {
@@ -208,6 +236,7 @@ const WebXR = () => {
     const sendPosition = (id, x, y) => {
         console.log(`${id}, ${x}, ${y}`);
         room.sendEndpointStatsMessage({
+            type: "position",
             id,
             x,
             y
@@ -221,21 +250,24 @@ const WebXR = () => {
     useEffect(() => {
         connect();
         videoArray.current = new Array(document.getElementsByTagName("a-video").length - 1).fill(true);
+        camera.current?.el.setAttribute('read-position', '');
+
         return () => hangup();
     }, []);
 
     return (
         <div>
-            <Scene>
+            <Scene ref={scene}>
                 {/* <a-sky src={sky} radius="15" shadow="receive: true"></a-sky> */}
-                <Entity primitive="a-sky" radius="15" shadow="receive: true" src="aframe/sky"/>
+                <Entity primitive="a-sky" radius="15" shadow="receive: true" src="aframe/sky.jpg"/>
                 <Entity primitive="a-plane" src={floor} repeat=" 60 60" rotation="-90 0 0" scale="25 25 1" shadow="receive: true" static-body />
                 <a-entity progressive-controls></a-entity>
 
                 {/* <!--movement--> */}
                 <a-entity id="cam-rig" position="0 0 4">
-                    <Entity primitive="a-camera" id="head" user-height="1.6">
+                    <Entity ref={camera} primitive="a-camera" id="head" user-height="1.6">
                         <a-cursor></a-cursor>
+                        <a-box id="add-button" position="0 1 -1" color="red" width="0.5" height="0.5" depth="0.1"></a-box>
                     </Entity>
                 </a-entity>
 
@@ -306,7 +338,7 @@ const WebXR = () => {
                 <a-image src="aframe/Q.jpg" position="-0.464 2.3 -9.78" scale="0.76 0.66 1"></a-image>
                 <a-image src="aframe/tooopen.jpg" position="0.52 3.041 -9.78" scale="0.84 0.58 1"></a-image>
                 <a-image src="aframe/R.jpg" position="-0.95 1.45 -9.78" scale="0.51 0.72 1"></a-image>
-                <a-image src="aframe/#c" position="-0.31 1.46 -9.78" scale="0.5 0.75 1"></a-image>
+                <a-image src="aframe/C.jpg" position="-0.31 1.46 -9.78" scale="0.5 0.75 1"></a-image>
                 <a-image src="aframe/a.jpg" position="1.35 2.24 -9.78" scale="0.49 0.74 1"></a-image>
                 <a-image src="aframe/b.jpg" position="1.44 1.42 -9.78" scale="0.64 0.66 1"></a-image>
                 {/* <!--room--> */}

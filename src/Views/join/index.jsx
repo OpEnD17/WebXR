@@ -10,6 +10,7 @@ import { useSearchParams } from "react-router-dom";
 const Join = props => {
 
     const { appId } = props.data;
+    const token = props.data;
     const JitsiMeetJS = window.JitsiMeetJS;
     const track_container = useRef();
     const largeVideo = useRef();

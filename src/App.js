@@ -19,13 +19,14 @@ function App() {
     setData(data);
   };
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const result = await axios.get('http://localhost:8080/api/token?name=test');
-  //     console.log(result.data);
-  //   };
-  //   fetchData();
-  // }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await axios.get('http://localhost:8080/api/token');
+      // console.log(result.data);
+      handleDataChange(result.data);
+    };
+    fetchData();
+  }, []);
 
   return (
     <MyContext.Provider value={{ data, handleDataChange }} >
