@@ -18,30 +18,43 @@ export const removeCamera = () => {
         });
 };
 
+export const throttle = (fn: Function, wait: number = 300) => {
+    let inThrottle: boolean,
+        lastFn: ReturnType<typeof setTimeout>,
+        lastTime: number;
+    return function (this: any) {
+        const context = this,
+            args = arguments;
+        if (!inThrottle) {
+            fn.apply(context, args);
+            lastTime = Date.now();
+            inThrottle = true;
+        } else {
+            clearTimeout(lastFn);
+            lastFn = setTimeout(() => {
+                if (Date.now() - lastTime >= wait) {
+                    fn.apply(context, args);
+                    lastTime = Date.now();
+                }
+            }, Math.max(wait - (Date.now() - lastTime), 0));
+        }
+    };
+};
+
 export const buildOptions = (appId: string, room: string): Object => {
 
     return {
         "hosts": {
             "domain": "8x8.vc",
             "focus": "focus.8x8.vc",
-            "muc": "conference.vpaas-magic-cookie-1c35e0eb9e54413a9f4f43797eccb55a.8x8.vc"
+            "muc": "conference.vpaas-magic-cookie-658a633d955c461f97b1f5476495bff9.8x8.vc"
         },
         "hiddenDomain": "recorder.8x8.vc",
-        "websocket": "wss://8x8.vc/vpaas-magic-cookie-1c35e0eb9e54413a9f4f43797eccb55a/xmpp-websocket",
-        "serviceUrl": "wss://8x8.vc/vpaas-magic-cookie-1c35e0eb9e54413a9f4f43797eccb55a/xmpp-websocket?room=group15",
-        "bosh": "//8x8.vc/vpaas-magic-cookie-1c35e0eb9e54413a9f4f43797eccb55a/http-bind",
-        "websocketKeepAlive": "https://8x8.vc/vpaas-magic-cookie-1c35e0eb9e54413a9f4f43797eccb55a/_unlock?room=group15",
-        // "hosts": {
-        //     "domain": "8x8.vc",
-        //     "focus": "focus.8x8.vc",
-        //     "muc": `conference.${appId}.8x8.vc`
-        // },
-        // "hiddenDomain": "recorder.8x8.vc",
-        // "websocket": `wss://8x8.vc/${appId}/xmpp-websocket`,
-        // "serviceUrl": `wss://8x8.vc/${appId}/xmpp-websocket?room=${room}`,
-        // "websocketKeepAlive": `https://8x8.vc/${appId}/_unlock?room=${room}`,
+        "websocket": "wss://8x8.vc/vpaas-magic-cookie-658a633d955c461f97b1f5476495bff9/xmpp-websocket",
+        "serviceUrl": "wss://8x8.vc/vpaas-magic-cookie-658a633d955c461f97b1f5476495bff9/xmpp-websocket?room=group15",
+        "bosh": "//8x8.vc/vpaas-magic-cookie-658a633d955c461f97b1f5476495bff9/http-bind",
+        "websocketKeepAlive": "https://8x8.vc/vpaas-magic-cookie-658a633d955c461f97b1f5476495bff9/_unlock?room=group15",
         "openBridgeChannel": "datachannel",
-        // "resolution": 720,
         "constraints": {
             "video": {
                 "frameRate": 30,
@@ -249,3 +262,6 @@ export const buildOptions = (appId: string, room: string): Object => {
     };
 };
 
+export const getToken = (): String => {
+    return "eyJraWQiOiJ2cGFhcy1tYWdpYy1jb29raWUtNjU4YTYzM2Q5NTVjNDYxZjk3YjFmNTQ3NjQ5NWJmZjkvMjg4ZWY0IiwidHlwIjoiSldUIiwiYWxnIjoiUlMyNTYifQ.eyJhdWQiOiJqaXRzaSIsImlzcyI6ImNoYXQiLCJpYXQiOjE2ODM4OTg4MTQsImV4cCI6MTY5MzkwNjAxNCwibmJmIjoxNjgzODk4ODA5LCJzdWIiOiJ2cGFhcy1tYWdpYy1jb29raWUtNjU4YTYzM2Q5NTVjNDYxZjk3YjFmNTQ3NjQ5NWJmZjkiLCJjb250ZXh0Ijp7ImZlYXR1cmVzIjp7ImxpdmVzdHJlYW1pbmciOnRydWUsIm91dGJvdW5kLWNhbGwiOnRydWUsInNpcC1vdXRib3VuZC1jYWxsIjpmYWxzZSwidHJhbnNjcmlwdGlvbiI6dHJ1ZSwicmVjb3JkaW5nIjp0cnVlfSwidXNlciI6eyJoaWRkZW4tZnJvbS1yZWNvcmRlciI6ZmFsc2UsIm1vZGVyYXRvciI6dHJ1ZSwibmFtZSI6Inc3NjMwMjM5NDEiLCJpZCI6Imdvb2dsZS1vYXV0aDJ8MTAwNzEzNDUyNjM0ODA3NTg0NjQyIiwiYXZhdGFyIjoiIiwiZW1haWwiOiJ3NzYzMDIzOTQxQGdtYWlsLmNvbSJ9fSwicm9vbSI6IioifQ.GcyWR8N5p0XB1toOQGoZH--VGaAIqmGzivqIcRikp3aDheJyrD-_CLhHizvm6yfxRtJQLEFWYp3uzC1AsAfsZ9x1JRA_uJ5lQkApZatk6Z-pJunyHQDH4TpnTLBIZjyza-rpXMUrPx_h0t0EDK8T9e9iOqTpzjlCyBm5drXpi2pVMFrYacwbQG-Pvnb3UMbcV2pTDh6idjMs8Rz2qzO6STQB7hK9zU-OIPtD6wNPb2jVO_q5OADcguyOpTRbEMAACsHnlZonuSdoR4ht5oJWDU77dD4iA6B5wLEbWDPrv6QXTesrpukem9VERKO5nS0LYDD2akQACu5J8GpScG7mqw";
+};

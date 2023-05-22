@@ -10,7 +10,7 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 const Layout = props => {
 
     const [visible, setVisible] = useState(false);
-    const target = useRef("./conference");
+    const target = useRef("./webxr");
     const changeTarget = t => {
         target.current = t;
     }

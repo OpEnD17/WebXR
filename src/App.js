@@ -1,7 +1,6 @@
 import Layout from "./layout";
 import WebXR from "./views/webxr";
 import Join from "./views/join";
-import Chat from "./views/socket";
 
 import "./App.css";
 
@@ -19,23 +18,13 @@ function App() {
     setData(data);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const result = await axios.get('http://localhost:8080/api/token');
-      // console.log(result.data);
-      handleDataChange(result.data);
-    };
-    fetchData();
-  }, []);
-
   return (
     <MyContext.Provider value={{ data, handleDataChange }} >
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Layout />}></Route>
           <Route path="/conference" element={<Join data={data}/>}></Route>
-          <Route path="/webxr" element={<WebXR />}></Route>
-          <Route path="/chat" element={<Chat />}></Route>
+          <Route path="/webxr" element={<WebXR data={data}/>}></Route>
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </BrowserRouter>

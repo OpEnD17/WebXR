@@ -1,13 +1,15 @@
 import "./index.css";
 
 import { cleanupDOM, createDOM, buildOptions } from '../../tool/tools.ts';
-import token from "../../tool/token";
 
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useSearchParams } from "react-router-dom";
 
 const Join = props => {
+
+    console.log('render');
+
 
     const { appId } = props.data;
     const token = props.data;
@@ -92,7 +94,8 @@ const Join = props => {
             video.addEventListener('click', func, false);
             track_container.current?.append(video);
             track.attach(video);
-        } else {
+        }
+        else {
             cleanupDOM(participant + 'audio');
             const audio = createDOM('audio', {
                 autoplay: '1',
@@ -154,16 +157,18 @@ const Join = props => {
         room.current.on(JitsiMeetJS.events.conference.USER_JOINED, onUserJoined);
         room.current.on(JitsiMeetJS.events.conference.USER_LEFT, onUserLeft);
         room.current.on(JitsiMeetJS.events.conference.ENDPOINT_MESSAGE_RECEIVED, onPositionReceived);
-        
+
         room.current.join();
     };
 
     const connect = async () => {
+        console.log(JitsiMeetJS);
         JitsiMeetJS.init();
+        console.log(JitsiMeetJS);
         connection.current = new JitsiMeetJS.JitsiConnection(null, token, buildOptions(appId, searchParams.get('room')));
         JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         const tracks = await JitsiMeetJS.createLocalTracks({
-            devices: ['audio', 'video']
+            devices: ["video","audio"]
         });
         onLocalTracks(tracks);
         console.log(connection);
@@ -193,22 +198,16 @@ const Join = props => {
         })
     };
 
-    const sendPosition = (x, y) => {
-        console.log(`${x}, ${y}`);
-        console.log(room.current.myUserId());
-        room.current.sendMessage({
-            x,
-            y
-        }, "");
-    };
-    
-    const onPositionReceived = (vi ,data) => {
+    const onPositionReceived = (vi, data) => {
         console.log(vi._id);
         console.log(data);
     }
 
     useEffect(() => {
         connect();
+        return () => {
+            hangup()
+        }
     }, []);
 
     useEffect(() => {
@@ -229,16 +228,8 @@ const Join = props => {
                         <div className="leave-button" onClick={hangup}>leave</div>
                     </div>
                 </div>
-                <div
-                    className="track-container"
-                    ref={track_container}
-                >
+                <div className="track-container" ref={track_container}>
                 </div>
-                {/* <div onClick={() => {
-                    sendPosition(0, 0);
-                }}>
-                    send
-                </div> */}
             </div>
         </>
     );
