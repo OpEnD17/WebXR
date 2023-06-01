@@ -1,6 +1,6 @@
 import "./index.css";
 
-import { cleanupDOM, createDOM, buildOptions } from '../../tool/tools.ts';
+import { cleanupDOM, createDOM, buildOptions, getToken } from '../../tool/tools.ts';
 
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router";
@@ -10,9 +10,6 @@ const Join = props => {
 
     console.log('render');
 
-
-    const { appId } = props.data;
-    const token = props.data;
     const JitsiMeetJS = window.JitsiMeetJS;
     const track_container = useRef();
     const largeVideo = useRef();
@@ -20,7 +17,6 @@ const Join = props => {
     const connection = useRef();
     const localTracks = useRef([]);
     const remoteTracks = useRef({});
-    // const participantIds = new Set();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const [large, setLarge] = useState();
@@ -35,7 +31,6 @@ const Join = props => {
                 cleanupDOM("localVideo" + i);
                 const func = () => {
                     console.log(large);
-                    // large.detach(largeVideo.current);
                     setLarge(localTracks.current[i]);
                 }
                 const video = createDOM('video', {
@@ -51,22 +46,10 @@ const Join = props => {
                 console.log(localTracks.current[i]);
                 setLarge(localTracks.current[i]);
             }
-            // else {
-            //     cleanupDOM("localAudio" + i);
-            //     const audio = createDOM('audio', {
-            //         autoplay: '1',
-            //         id: 'localAudio' + i,
-            //         muted: false
-            //     });
-            //     l_container.current?.append(audio);
-            //     localTracks.current[i].attach(audio);
-            // }
         }
     };
 
     const onRemoteTrack = track => {
-        // console.log('**************remote track**************');
-        // console.log(track);
 
         const participant = track.getParticipantId();
         if (!remoteTracks.current[participant]) {
@@ -77,19 +60,13 @@ const Join = props => {
             cleanupDOM(participant + 'video');
             const func = () => {
                 console.log(large);
-                // large.detach(largeVideo.current);
                 setLarge(track);
             }
             const video = createDOM('video', {
                 autoplay: '1',
                 id: participant + 'video',
                 width: 300,
-                // height: 300,
                 class: "remoteVideo videoTrack",
-                // onclick: () => {
-                //     large.detach(largeVideo.current);
-                //     setLarge(track);
-                // },
             });
             video.addEventListener('click', func, false);
             track_container.current?.append(video);
@@ -129,8 +106,6 @@ const Join = props => {
 
     const onUserJoined = id => {
         console.log(`User ${id} Joined!`);
-        // participantIds.add(id);
-        // room.current.selectParticipants(Array.from(participantIds));
     };
 
     const onUserLeft = id => {
@@ -138,8 +113,6 @@ const Join = props => {
         cleanupDOM(id + "video");
         cleanupDOM(id + "audio");
         delete remoteTracks.current[id];
-        // participantIds.delete(id);
-        // room.current.selectParticipants(Array.from(participantIds));
     };
 
     const onConnectionSuccess = () => {
@@ -165,10 +138,10 @@ const Join = props => {
         console.log(JitsiMeetJS);
         JitsiMeetJS.init();
         console.log(JitsiMeetJS);
-        connection.current = new JitsiMeetJS.JitsiConnection(null, token, buildOptions(appId, searchParams.get('room')));
+        connection.current = new JitsiMeetJS.JitsiConnection(null, getToken(), buildOptions());
         JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         const tracks = await JitsiMeetJS.createLocalTracks({
-            devices: ["video","audio"]
+            devices: ["video", "audio"]
         });
         onLocalTracks(tracks);
         console.log(connection);
@@ -183,7 +156,6 @@ const Join = props => {
         removeRemoteTracks();
         room.current && await room.current.leave();
         navigate("/");
-        // removeCamera();
     };
 
     const removeRemoteTracks = () => {
@@ -216,10 +188,6 @@ const Join = props => {
 
     return (
         <>
-            {/* <div onClick={connect}>Start meeting</div> */}
-            {/* <div onClick={hangup}>End meeting</div> */}
-            {/* <div onClick={() => { console.log(localTracks.current) }}>Check local tracks</div>
-            <div onClick={() => { console.log(remoteTracks.current) }}>Check remote tracks</div> */}
             <div className="conference-container" >
                 <div className="largeVideo-container">
                     <div className="large-video"></div>

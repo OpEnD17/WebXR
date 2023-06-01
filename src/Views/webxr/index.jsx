@@ -16,7 +16,30 @@ const JitsiMeetJS = window.JitsiMeetJS;
 const conf = JitsiMeetJS.events.conference;
 const conn = JitsiMeetJS.events.connection;
 
-const WebXR = props => {
+// A.registerComponent('raycaster-listen', {
+//     init: function () {
+//         // Use events to figure out what raycaster is listening so we don't have to
+//         // hardcode the raycaster.
+//         this.el.addEventListener('raycaster-intersected', evt => {
+//             console.log(evt.detail);
+//             this.raycaster = evt.detail.el;
+//         });
+//         this.el.addEventListener('raycaster-intersected-cleared', evt => {
+//             this.raycaster = null;
+//         });
+//     },
+
+//     tick: function () {
+//         console.log(this.raycaster);
+//         if (!this.raycaster) { return; }  // Not intersecting.
+
+//         let intersection = this.raycaster.components.raycaster.getIntersection(this.el);
+//         if (!intersection) { return; }
+//         console.log(intersection.point);
+//     }
+// });
+
+const WebXR = () => {
 
     const connection = useConnect();
     const [connected, setConnected] = useState(false);
@@ -24,7 +47,11 @@ const WebXR = props => {
     const [users, setUsers] = useState({});
     const localTracks = useRef([]);
     const remoteTracks = useRef({});
+    // px = X position, rx = X rotation, 
+    // info = [px, pz, rx, ry, rz, color]
+    const info = useRef([0, 0, 0, 0, 0, "000000"]);
     const assetsRef = useRef();
+    const laserRef = useRef();
 
     const onLocalTracks = tracks => {
         console.log('**************localTracks**************');
@@ -32,31 +59,6 @@ const WebXR = props => {
         for (const track of tracks) {
             localTracks.current.push(track);
         }
-
-        // for (let i in localTracks) {
-        //     if (localTracks[i].getType() === 'video') {
-        //         cleanupDOM("localVideo" + i);
-        //         const video = createDOM('video', {
-        //             autoplay: '1',
-        //             id: 'localVideo' + i,
-        //             width: 450,
-        //             height: 300
-        //         });
-        //         container.current?.append(video);
-        //         localTracks[i].attach(video);
-        //         document.getElementById("localScreen").setAttribute("src", "#localVideo" + i);
-        //     }
-        //     else {
-        //         cleanupDOM("localAudio" + i);
-        //         const audio = createDOM('audio', {
-        //             autoplay: '1',
-        //             id: 'localAudio' + i,
-        //             muted: false
-        //         });
-        //         container.current?.append(audio);
-        //         localTracks[i].attach(audio);
-        //     }
-        // }
     };
 
     const onRemoteTrack = track => {
@@ -69,7 +71,7 @@ const WebXR = props => {
         }
 
         const participantId = track.getParticipantId();
-        if (track.getType() == 'audio') {
+        if (track.getType() === 'audio') {
             remoteTracks.current[participantId][0] = track;
         }
         else {
@@ -97,10 +99,10 @@ const WebXR = props => {
 
     const onConferenceJoined = () => {
         console.log('conference joined!');
-        for (const track of localTracks.current){
+        for (const track of localTracks.current) {
             room.addTrack(track);
         }
-        console.log(room)
+        info.current[5] = room.myUserId().substr(0, 6);
     };
 
     const onConnectionFailed = () => {
@@ -113,18 +115,15 @@ const WebXR = props => {
         connection?.removeEventListener(conn.CONNECTION_ESTABLISHED, onConnectionSuccess);
         connection?.removeEventListener(conn.CONNECTION_FAILED, onConnectionFailed);
         connection?.removeEventListener(conn.CONNECTION_DISCONNECTED, disconnect);
-
         for (let i = 0; i < localTracks.current.length; i++) {
             localTracks.current[i].dispose();
         }
-
         return await connection?.disconnect();
     };
 
-
     const onUserJoined = id => {
         console.log(`User ${id} Joined!`);
-        users[id] = [0, 0, 0];
+        users[id] = [0, 0, 0, 0, 0, id.substr(0, 6)];
         remoteTracks.current[id] = [null, null];
         setUsers({ ...users });
     };
@@ -136,12 +135,17 @@ const WebXR = props => {
     };
 
     const onMessgeReceived = (r, data) => {
+        console.log(data);
         switch (data.type) {
             case "pos":
-                if (users[r._id][0] == data.x && users[r._id][1] == data.z && users[r._id][2] == data.r){
+                if (users[r._id][0] === data.x
+                    && users[r._id][1] === data.z
+                    && users[r._id][2] === data.rx
+                    && users[r._id][3] === data.ry
+                    && users[r._id][4] === data.rz) {
                     return;
                 }
-                users[r._id] = [data.x, data.z, data.r];
+                users[r._id] = [data.x, data.z, data.rx, data.ry, data.rz, r._id.substr(0,)];
                 setUsers({ ...users });
                 break;
             default:
@@ -162,18 +166,31 @@ const WebXR = props => {
         A.registerComponent('send-pos', {
             tick: throttle(function () {
                 const pos = this.el.object3D.position;
-                const r_y = this.el.getAttribute("rotation").y;
-                sendPos(pos.x, pos.z, r_y + 180);
-            }, 1200)
+                const rotation = this.el.getAttribute("rotation");
+                if (pos.x !== info.current[0]
+                    || pos.y !== info.current[1]
+                    || rotation.x !== info.current[2]
+                    || rotation.y !== info.current[3]
+                    || rotation.z !== info.current[4]) {
+                    info.current[0] = pos.x;
+                    info.current[1] = pos.y;
+                    info.current[2] = rotation.x;
+                    info.current[3] = rotation.y;
+                    info.current[4] = rotation.z;
+                    sendPos(pos.x, pos.z, -rotation.x, rotation.y + 180, -rotation.z);
+                }
+            }, 1000)
         });
     };
 
-    const sendPos = (x, z, r) => {
+    const sendPos = (x, z, rx, ry, rz) => {
         room?.sendMessage({
             type: "pos",
             x: x.toFixed(3),
             z: z.toFixed(3),
-            r: r.toFixed(3)
+            rx: rx.toFixed(3),
+            ry: ry.toFixed(3),
+            rz: rz.toFixed(3),
         });
     };
 
@@ -239,18 +256,19 @@ const WebXR = props => {
             <Scene vr-mode-ui="enterVRButton: #button">
                 {/* <a-sky src={sky} radius="15" shadow="receive: true"></a-sky> */}
                 <a id="button" style={{ position: "fixed", zIndex: 999 }}>Enter VR Mode</a>
-                <a-entity laser-controls="hand: right"></a-entity>
-                <a-entity id="rightHand" hand-controls="hand: right; handModelStyle: lowPoly; color: #ffcccc"></a-entity>
+                <a-entity ref={laserRef} laser-controls="hand: right" raycaster></a-entity>
+                {/* <a-entity id="rightHand" hand-controls="hand: right; handModelStyle: lowPoly; color: #ffcccc"></a-entity> */}
 
                 <Entity primitive="a-sky" radius="15" shadow="receive: true" src="aframe/sky.jpg" />
-                <Entity primitive="a-plane" src={floor} repeat=" 60 60" rotation="-90 0 0" scale="25 25 1" shadow="receive: true" static-body />
+                <Entity raycaster-listen id='floor' primitive="a-plane" src={floor} repeat=" 60 60" rotation="-90 0 0" scale="25 25 1" shadow="receive: true" static-body />
+                <a-entity class='intersection' src={floor} repeat=" 60 60" rotation="-90 0 0" scale="25 25 1" shadow="receive: true" static-body />
+
                 <a-entity progressive-controls></a-entity>
 
                 {/* <!--movement--> */}
                 <a-entity id='cameraRig'>
                     {/* <Entity id='head' primitive="a-camera" user-height="1.6" look-controls="pointerLockEnabled: true" send-pos> */}
-                    <Entity id='head' primitive="a-camera" user-height="1.6" send-pos>
-
+                    <Entity id='head' primitive="a-camera" user-height="1.6" send-pos >
                         <Entity
                             primitive="a-cursor"
                             cursor={{ fuse: false }}
@@ -258,8 +276,8 @@ const WebXR = props => {
                             geometry={{ radiusInner: 0.005, radiusOuter: 0.007 }}
                         />
                     </Entity>
-                    <a-entity id="left-hand" teleport-controls="cameraRig: #cameraRig; teleportOrigin: #head;" gearvr-controls></a-entity>
-                    <a-entity id="right-hand" teleport-controls="cameraRig: #cameraRig; teleportOrigin: #head;" gearvr-controls></a-entity>
+                    {/* <a-entity id="left-hand" teleport-controls="cameraRig: #cameraRig; teleportOrigin: #head;" gearvr-controls></a-entity>
+                    <a-entity id="right-hand" teleport-controls="cameraRig: #cameraRig; teleportOrigin: #head;" gearvr-controls></a-entity> */}
                 </a-entity>
 
                 <a-box data-brackets-id="514" color="#AA0000" depth="0.2" height="0.7" width="5" material="" geometry="" position="-1.0 0.35 1.5"></a-box>
@@ -267,9 +285,8 @@ const WebXR = props => {
 
                 {
                     Object.keys(users).map(id => {
-                        console.log(remoteTracks.current)
                         return id !== "me" &&
-                            <Avatar key={id} id={id} pos={users[id]} track={(remoteTracks.current[id] && remoteTracks.current[id][1] != null) ? true : false} />
+                            <Avatar key={id} id={id} info={users[id]} track={(remoteTracks.current[id] && remoteTracks.current[id][1] != null) ? true : false} />
                     })
                 }
 
@@ -285,8 +302,8 @@ const WebXR = props => {
                 </a-entity>
                 <a-box color="yellow" height="0.422" width="0.39" depth="0.75" position="9.11054 0.25999 -7.98199" data-brackets-id="440" ></a-box>
 
-                {/* <!--celling--> */}
-                <a-box color="white" height="1" width="20" depth="20" position="0 4.5 0"></a-box>
+                {/* <!--ceiling--> */}
+                <a-box id='ceil' color="white" height="1" width="20" depth="20" position="0 4.5 0"></a-box>
                 {/* <!--wall--> */}
                 <a-box data-brackets-id="600" color="white" position="9.9 2 0" material="" geometry="height: 4; width: 0.2; depth: 20"></a-box>
                 <a-box data-brackets-id="627" color="white" position="0 2 -9.9" material="" geometry="height:4; width: 20; depth: 0.2"></a-box>
@@ -299,15 +316,10 @@ const WebXR = props => {
                 <a-box data-brackets-id="1637" color="white" position="3.89924 3.75848 7.5" material="" geometry="height: 0.55; width: 1.96; depth: 0.2"></a-box>
 
                 <a-box data-brackets-id="303" color="white" position="-9.9 2 -5.01609" material="" geometry="height: 4; width: 0.2; depth: 9.94"></a-box>
-
-
-
             </Scene>
-
-
         </div>
     );
-}
-//};
+};
+
 
 export default WebXR;

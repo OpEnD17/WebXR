@@ -9,7 +9,6 @@ const Modal = props => {
 
     let mediaCamera;
 
-    const { handleDataChange } = useContext(MyContext);
 
     const stopCamera = () => {
         mediaCamera.getTracks()[0].stop();
