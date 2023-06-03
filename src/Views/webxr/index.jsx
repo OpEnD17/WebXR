@@ -47,20 +47,23 @@ A.registerComponent('movement', {
     init: function () {
         const el = this.el;
         const camera = document.getElementById('cameraRig');
-
+        const rightHand = document.getElementById('handRig');
         el.addEventListener('mousedown', function (event) {
+            console.log('mousedown')
             const point = event.detail.intersection.point;
             console.log(point);
-            point.y = 1.6;
             camera.setAttribute('position', point);
-
             console.log(camera)
         });
 
         const scene = document.getElementById('scene');
         scene.addEventListener('triggerdown', e => {
+            console.log('triggerdown')
             console.log(point)
-            point && camera.setAttribute('position', point);
+            if (point) {
+                camera.setAttribute('position', point);
+                rightHand.setAttribute('position', point);
+            }
             console.log(camera);
         })
 
@@ -339,7 +342,10 @@ const WebXR = () => {
             <Scene id='scene' ref={sceneRef} vr-mode-ui="enterVRButton: #button">
                 {/* <a-sky src={sky} radius="15" shadow="receive: true"></a-sky> */}
                 <a id="button" style={{ position: "fixed", zIndex: 999 }}>Enter VR Mode</a>
-                <a-entity id='righthand' laser-controls="hand: right"></a-entity>
+                <Entity id='handRig'>
+                    <a-entity id='righthand' laser-controls="hand: right"></a-entity>
+
+                </Entity>
                 {/* <a-entity id="rightHand" hand-controls="hand: right; handModelStyle: lowPoly; color: #ffcccc"></a-entity> */}
 
                 <Entity primitive="a-sky" radius="15" shadow="receive: true" src="aframe/sky.jpg" />
