@@ -47,13 +47,13 @@ A.registerComponent('movement', {
     init: function () {
         const el = this.el;
         const camera = document.getElementById('cameraRig');
-        const rightHand = document.getElementById('handRig');
+        // const rightHand = document.getElementById('handRig');
         el.addEventListener('mousedown', function (e) {
             console.log('mousedown')
             const point = e.detail.intersection.point;
             console.log(point);
             camera.setAttribute('position', point);
-            rightHand.setAttribute('position', point);
+            // rightHand.setAttribute('position', point);
         });
 
         // el.addEventListener('raycaster-intersected', e => {
@@ -317,10 +317,6 @@ const WebXR = () => {
         <div>
             <Scene id='scene' vr-mode-ui="enterVRButton: #button">
                 <a id="button" style={{ position: "fixed", zIndex: 999 }}>Enter VR Mode</a>
-                <Entity id='handRig'>
-                    <a-entity id='righthand' laser-controls="hand: right"></a-entity>
-
-                </Entity>
                 <Entity primitive="a-sky" radius="15" shadow="receive: true" src="aframe/sky.jpg" />
                 <a-plane movement raycaster="object: .clickable" clickable id='floor' ref={floorRef} src={floor} repeat=" 60 60" rotation="-90 0 0" scale="25 25 1" />
 
@@ -334,6 +330,7 @@ const WebXR = () => {
                             geometry={{ radiusInner: 0.005, radiusOuter: 0.007 }}
                         />
                     </Entity>
+                    <a-entity id='righthand' laser-controls="hand: right"></a-entity>
                 </Entity>
 
                 <a-box data-brackets-id="514" color="#AA0000" depth="0.2" height="0.7" width="5" material="" geometry="" position="-1.0 0.35 1.5"></a-box>
