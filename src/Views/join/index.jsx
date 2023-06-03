@@ -8,8 +8,6 @@ import { useSearchParams } from "react-router-dom";
 
 const Join = props => {
 
-    console.log('render');
-
     const JitsiMeetJS = window.JitsiMeetJS;
     const track_container = useRef();
     const largeVideo = useRef();
