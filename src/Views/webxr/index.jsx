@@ -16,42 +16,96 @@ const JitsiMeetJS = window.JitsiMeetJS;
 const conf = JitsiMeetJS.events.conference;
 const conn = JitsiMeetJS.events.connection;
 
-// A.registerComponent('raycaster-listen', {
-//     init: function () {
-//         // Use events to figure out what raycaster is listening so we don't have to
-//         // hardcode the raycaster.
-//         this.el.addEventListener('raycaster-intersected', evt => {
-//             console.log(evt.detail);
-//             this.raycaster = evt.detail.el;
-//         });
-//         this.el.addEventListener('raycaster-intersected-cleared', evt => {
-//             this.raycaster = null;
-//         });
-//     },
+let point;
 
-//     tick: function () {
-//         console.log(this.raycaster);
-//         if (!this.raycaster) { return; }  // Not intersecting.
+A.registerComponent('raycaster-listen', {
+    init: function () {
+        this.el.addEventListener('raycaster-intersected', e => {
+            this.raycaster = e.detail.el;
+        });
+        this.el.addEventListener('raycaster-intersected-cleared', e => {
+            this.raycaster = null;
+        });
+    },
 
-//         let intersection = this.raycaster.components.raycaster.getIntersection(this.el);
-//         if (!intersection) { return; }
-//         console.log(intersection.point);
-//     }
-// });
+    tick: function () {
+        // console.log(this)
+        if (!this.raycaster) {
+            point = null;
+            return;
+        }
+        let intersection = this.raycaster.components.raycaster.getIntersection(this.el);
+        if (!intersection) {
+            return;
+        }
+        // console.log(intersection.point);
+        point = intersection.point;
+    }
+});
+
+A.registerComponent('movement', {
+    init: function () {
+        const el = this.el;
+        const camera = document.getElementById('cameraRig');
+
+        el.addEventListener('mousedown', function (event) {
+            const point = event.detail.intersection.point;
+            console.log(point);
+            point.y = 1.6;
+            camera.setAttribute('position', point);
+
+            console.log(camera)
+        });
+
+        const scene = document.getElementById('scene');
+        scene.addEventListener('triggerdown', e => {
+            console.log(point)
+            point && camera.setAttribute('position', point);
+            console.log(camera);
+        })
+
+        el.addEventListener('raycaster-intersected', e => {
+            this.raycaster = e.detail.el;
+        });
+        el.addEventListener('raycaster-intersected-cleared', e => {
+            this.raycaster = null;
+        });
+    },
+
+    tick: function () {
+        // console.log(this)
+        if (!this.raycaster) {
+            point = null;
+            return;
+        }
+        let intersection = this.raycaster.components.raycaster.getIntersection(this.el);
+        if (!intersection) {
+            return;
+        }
+        // console.log(intersection.point);
+        point = intersection.point;
+    }
+});
+
+
 
 const WebXR = () => {
 
+    console.log(point);
     const connection = useConnect();
     const [connected, setConnected] = useState(false);
     const room = useRoom(connection);
     const [users, setUsers] = useState({});
     const localTracks = useRef([]);
     const remoteTracks = useRef({});
+    const intersectPoint = useRef({});
     // px = X position, rx = X rotation, 
     // info = [px, pz, rx, ry, rz, color]
     const info = useRef([0, 0, 0, 0, 0, "000000"]);
-    const assetsRef = useRef();
-    const laserRef = useRef();
+    const assetsRef = useRef(null);
+    const floorRef = useRef(null)
+    const sceneRef = useRef(null);
+    const cameraRef = useRef(null);
 
     const onLocalTracks = tracks => {
         console.log('**************localTracks**************');
@@ -145,7 +199,7 @@ const WebXR = () => {
                     && users[r._id][4] === data.rz) {
                     return;
                 }
-                users[r._id] = [data.x, data.z, data.rx, data.ry, data.rz, r._id.substr(0,)];
+                users[r._id] = [data.x, data.z, data.rx, data.ry, data.rz, r._id.substr(0, 6)];
                 setUsers({ ...users });
                 break;
             default:
@@ -181,6 +235,23 @@ const WebXR = () => {
                 }
             }, 1000)
         });
+
+        // A.registerComponent('record-intersection', {
+        //     tick: function () {
+        //         console.log(this)
+
+        //         if (!this.raycaster) {
+        //             return;
+        //         }
+        //         let intersection = this.raycaster.components.raycaster.getIntersection(this.el);
+        //         if (!intersection) {
+        //             return;
+        //         }
+        //         console.log(intersection.point);
+        //         // intersectPoint.current = intersection.point;
+        //     }
+        // });
+
     };
 
     const sendPos = (x, z, rx, ry, rz) => {
@@ -198,22 +269,22 @@ const WebXR = () => {
 
         JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         let flag = false;
-        await navigator.mediaDevices.getUserMedia({ video: true })
-            .then(() => {
-                flag = true
-            }, () => {
-                console.log('Camera not available!');
-            });
+        // await navigator.mediaDevices.getUserMedia({ video: true })
+        //     .then(() => {
+        //         flag = true
+        //     }, () => {
+        //         console.log('Camera not available!');
+        //     });
 
-        const tracks = flag
-            ? await JitsiMeetJS.createLocalTracks({
-                devices: ['audio', 'video']
-            })
-            : await JitsiMeetJS.createLocalTracks({
-                devices: ['audio']
-            });
+        // const tracks = flag
+        //     ? await JitsiMeetJS.createLocalTracks({
+        //         devices: ['audio', 'video']
+        //     })
+        //     : await JitsiMeetJS.createLocalTracks({
+        //         devices: ['audio']
+        //     });
 
-        onLocalTracks(tracks);
+        // onLocalTracks(tracks);
 
         connection.addEventListener(conn.CONNECTION_ESTABLISHED, () => setConnected(true));
         connection.addEventListener(conn.CONNECTION_FAILED, onConnectionFailed);
@@ -238,6 +309,15 @@ const WebXR = () => {
         })
     };
 
+    const onTriggerDown = e => {
+        console.log(floorRef.current);
+        console.log(point)
+        console.log(cameraRef.current.el)
+        if (point) {
+            cameraRef.current.el.setAttribute('potision', `${point.x} ${point.y} ${point.z}`);
+        }
+    };
+
     useEffect(() => {
         if (connected) {
             onConnectionSuccess();
@@ -251,24 +331,25 @@ const WebXR = () => {
         return () => hangup();
     }, [connection]);
 
+    // sceneRef.current?.el.addEventListener('triggerdown', onTriggerDown);
+    // sceneRef.current?.el.addEventListener('mousedown', onTriggerDown);
+
     return (
         <div>
-            <Scene vr-mode-ui="enterVRButton: #button">
+            <Scene id='scene' ref={sceneRef} vr-mode-ui="enterVRButton: #button">
                 {/* <a-sky src={sky} radius="15" shadow="receive: true"></a-sky> */}
                 <a id="button" style={{ position: "fixed", zIndex: 999 }}>Enter VR Mode</a>
-                <a-entity ref={laserRef} laser-controls="hand: right" raycaster></a-entity>
+                <a-entity id='righthand' laser-controls="hand: right"></a-entity>
                 {/* <a-entity id="rightHand" hand-controls="hand: right; handModelStyle: lowPoly; color: #ffcccc"></a-entity> */}
 
                 <Entity primitive="a-sky" radius="15" shadow="receive: true" src="aframe/sky.jpg" />
-                <Entity raycaster-listen id='floor' primitive="a-plane" src={floor} repeat=" 60 60" rotation="-90 0 0" scale="25 25 1" shadow="receive: true" static-body />
-                <a-entity class='intersection' src={floor} repeat=" 60 60" rotation="-90 0 0" scale="25 25 1" shadow="receive: true" static-body />
-
-                <a-entity progressive-controls></a-entity>
+                <a-plane movement raycaster="object: .clickable" clickable id='floor' ref={floorRef} src={floor} repeat=" 60 60" rotation="-90 0 0" scale="25 25 1" />
+                {/* <a-entity class='intersection' src={floor} repeat=" 60 60" rotation="-90 0 0" scale="25 25 1" shadow="receive: true" static-body /> */}
 
                 {/* <!--movement--> */}
-                <a-entity id='cameraRig'>
-                    {/* <Entity id='head' primitive="a-camera" user-height="1.6" look-controls="pointerLockEnabled: true" send-pos> */}
-                    <Entity id='head' primitive="a-camera" user-height="1.6" send-pos >
+                {/* <a-entity id='cameraRig' ref={cameraRef}> */}
+                <Entity id='cameraRig'>
+                    <Entity id='head' primitive="a-camera" user-height="1.6" send-pos ref={cameraRef}>
                         <Entity
                             primitive="a-cursor"
                             cursor={{ fuse: false }}
@@ -276,9 +357,10 @@ const WebXR = () => {
                             geometry={{ radiusInner: 0.005, radiusOuter: 0.007 }}
                         />
                     </Entity>
-                    {/* <a-entity id="left-hand" teleport-controls="cameraRig: #cameraRig; teleportOrigin: #head;" gearvr-controls></a-entity>
+                </Entity>
+                {/* <a-entity id="left-hand" teleport-controls="cameraRig: #cameraRig; teleportOrigin: #head;" gearvr-controls></a-entity>
                     <a-entity id="right-hand" teleport-controls="cameraRig: #cameraRig; teleportOrigin: #head;" gearvr-controls></a-entity> */}
-                </a-entity>
+                {/* </a-entity> */}
 
                 <a-box data-brackets-id="514" color="#AA0000" depth="0.2" height="0.7" width="5" material="" geometry="" position="-1.0 0.35 1.5"></a-box>
                 <a-box color="#AA0000" depth="2.4" height="0.1" width="5.5" position="-1.0 0.73905 1.5"></a-box>

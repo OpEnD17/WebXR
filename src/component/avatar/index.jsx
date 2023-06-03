@@ -4,7 +4,6 @@ import { useEffect, useRef } from 'react';
 
 const Avatar = ({ id, info, track }) => {
 
-    console.log(info)
     const headRef = useRef();
     const bodyRef = useRef();
     const avatarRef = useRef();
