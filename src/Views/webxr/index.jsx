@@ -3,82 +3,33 @@ import useConnect from "../../hooks/useConnect.js";
 import useRoom from "../../hooks/useRoom.js";
 import Avatar from "../../component/avatar/index.jsx";
 
-import "aframe";
-import { Entity, Scene } from "aframe-react";
+import "./index.css";
 
 import floor from "../../assets/image/floor.jpg";
 
+import "aframe";
+import { Entity, Scene } from "aframe-react";
 import React, { useEffect, useRef, useState } from "react";
-
 
 const A = window.AFRAME;
 const JitsiMeetJS = window.JitsiMeetJS;
 const conf = JitsiMeetJS.events.conference;
 const conn = JitsiMeetJS.events.connection;
 
-// let point;
-
-// A.registerComponent('raycaster-listen', {
-//     init: function () {
-//         this.el.addEventListener('raycaster-intersected', e => {
-//             this.raycaster = e.detail.el;
-//         });
-//         this.el.addEventListener('raycaster-intersected-cleared', e => {
-//             this.raycaster = null;
-//         });
-//     },
-
-//     tick: function () {
-//         // console.log(this)
-//         if (!this.raycaster) {
-//             point = null;
-//             return;
-//         }
-//         let intersection = this.raycaster.components.raycaster.getIntersection(this.el);
-//         if (!intersection) {
-//             return;
-//         }
-//         // console.log(intersection.point);
-//         point = intersection.point;
-//     }
-// });
-
 A.registerComponent('movement', {
     init: function () {
         const el = this.el;
         const camera = document.getElementById('cameraRig');
         // const rightHand = document.getElementById('handRig');
-        el.addEventListener('mousedown', function (e) {
+        el.addEventListener('mouseup', function (e) {
             console.log('mousedown')
             const point = e.detail.intersection.point;
             console.log(point);
             camera.setAttribute('position', point);
             // rightHand.setAttribute('position', point);
         });
-
-        // el.addEventListener('raycaster-intersected', e => {
-        //     this.raycaster = e.detail.el;
-        // });
-        // el.addEventListener('raycaster-intersected-cleared', e => {
-        //     this.raycaster = null;
-        // });
     },
-
-    // tick: function () {
-    //     // console.log(this)
-    //     if (!this.raycaster) {
-    //         point = null;
-    //         return;
-    //     }
-    //     let intersection = this.raycaster.components.raycaster.getIntersection(this.el);
-    //     if (!intersection) {
-    //         return;
-    //     }
-    //     // console.log(intersection.point);
-    //     point = intersection.point;
-    // }
 });
-
 
 
 const WebXR = () => {
@@ -89,14 +40,11 @@ const WebXR = () => {
     const [users, setUsers] = useState({});
     const localTracks = useRef([]);
     const remoteTracks = useRef({});
-    const intersectPoint = useRef({});
     // px = X position, rx = X rotation, 
     // info = [px, pz, rx, ry, rz, color]
     const info = useRef([0, 0, 0, 0, 0, "000000"]);
-    const assetsRef = useRef(null);
-    const floorRef = useRef(null)
-    const sceneRef = useRef(null);
-    const cameraRef = useRef(null);
+    const assetsRef = useRef();
+    const floorRef = useRef();
 
     const onLocalTracks = tracks => {
         console.log('**************localTracks**************');
@@ -226,23 +174,6 @@ const WebXR = () => {
                 }
             }, 1000)
         });
-
-        // A.registerComponent('record-intersection', {
-        //     tick: function () {
-        //         console.log(this)
-
-        //         if (!this.raycaster) {
-        //             return;
-        //         }
-        //         let intersection = this.raycaster.components.raycaster.getIntersection(this.el);
-        //         if (!intersection) {
-        //             return;
-        //         }
-        //         console.log(intersection.point);
-        //         // intersectPoint.current = intersection.point;
-        //     }
-        // });
-
     };
 
     const sendPos = (x, z, rx, ry, rz) => {
@@ -252,7 +183,7 @@ const WebXR = () => {
             z: z.toFixed(3),
             rx: rx.toFixed(3),
             ry: ry.toFixed(3),
-            rz: rz.toFixed(3),
+            rz: rz.toFixed(3)
         });
     };
 
@@ -276,7 +207,6 @@ const WebXR = () => {
             });
 
         onLocalTracks(tracks);
-
         connection.addEventListener(conn.CONNECTION_ESTABLISHED, () => setConnected(true));
         connection.addEventListener(conn.CONNECTION_FAILED, onConnectionFailed);
         connection.addEventListener(conn.CONNECTION_DISCONNECTED, disconnect);
@@ -315,14 +245,14 @@ const WebXR = () => {
 
     return (
         <div>
-            <Scene id='scene' vr-mode-ui="enterVRButton: #button">
-                <a id="button" style={{ position: "fixed", zIndex: 999 }}>Enter VR Mode</a>
+            <Scene id='scene' vr-mode-ui="enterVRButton: #VRButton">
+                <div id="VRButton">Enter VR Mode</div>
                 <Entity primitive="a-sky" radius="15" shadow="receive: true" src="aframe/sky.jpg" />
                 <a-plane movement raycaster="object: .clickable" clickable id='floor' ref={floorRef} src={floor} repeat=" 60 60" rotation="-90 0 0" scale="25 25 1" />
 
                 {/* <!--movement--> */}
                 <Entity id='cameraRig'>
-                    <Entity id='head' primitive="a-camera" user-height="1.6" send-pos ref={cameraRef}>
+                    <Entity primitive="a-camera" user-height="1.6" send-pos>
                         <Entity
                             primitive="a-cursor"
                             cursor={{ fuse: false }}
@@ -343,17 +273,7 @@ const WebXR = () => {
                     })
                 }
 
-                {/* <!--environment light--> */}
-                <a-assets id="asset-container" ref={assetsRef}>
-
-                </a-assets>
-
-                {/* <!--radio--> */}
-                <a-entity data-brackets-id="327" id="yellow" gltf-model="aframe/radio/scene.gltf" position="9.11851 0.45804 -7.96256" sound="src: mpi,Benjamin%20-%20Inferno.mp3" scale="0.2 0.2 0.2" rotation="0 17.71 0">
-                    <a-sphere data-brackets-id="328" color="#00AA00" radius="0.2" position="-0.5 0.93319 0" play="" material="" geometry=""></a-sphere>
-                    <a-sphere data-brackets-id="329" color="#AA0000" radius="0.2" position="0.5 1 0" stop="" material="" geometry=""></a-sphere>
-                </a-entity>
-                <a-box color="yellow" height="0.422" width="0.39" depth="0.75" position="9.11054 0.25999 -7.98199" data-brackets-id="440" ></a-box>
+                <a-assets id="asset-container" ref={assetsRef}></a-assets>
 
                 {/* <!--ceiling--> */}
                 <a-box id='ceil' color="white" height="1" width="20" depth="20" position="0 4.5 0"></a-box>

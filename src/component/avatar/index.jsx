@@ -11,8 +11,7 @@ const Avatar = ({ id, info, track }) => {
     useEffect(() => {
         headRef.current?.el.setAttribute('rotation', { x: info[2], y: info[3], z: info[4] });
         bodyRef.current?.el.setAttribute('rotation', { x: 0, y: info[3], z: 0 });
-        avatarRef.current?.el.object3D.position.set(info[0], 0.9, info[1])
-
+        avatarRef.current?.el.object3D.position.set(info[0], 0.9, info[1]);
     }, [info[0], info[1], info[2], info[3], info[4], info[5]]);
 
     return (

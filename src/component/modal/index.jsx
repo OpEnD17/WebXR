@@ -1,10 +1,5 @@
 import "./index.css";
 
-import { MyContext } from "../../App";
-
-import { useRef, useContext } from 'react';
-import axios from "axios";
-
 const Modal = props => {
 
     let mediaCamera;
