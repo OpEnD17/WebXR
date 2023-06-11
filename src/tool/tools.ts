@@ -29,7 +29,8 @@ export const throttle = (fn: Function, wait: number = 300) => {
             fn.apply(context, args);
             lastTime = Date.now();
             inThrottle = true;
-        } else {
+        }
+        else {
             clearTimeout(lastFn);
             lastFn = setTimeout(() => {
                 if (Date.now() - lastTime >= wait) {
@@ -41,7 +42,7 @@ export const throttle = (fn: Function, wait: number = 300) => {
     };
 };
 
-export const buildOptions = (appId: string, room: string): Object => {
+export const buildOptions = (room: string): Object => {
 
     return {
         "hosts": {
@@ -51,9 +52,11 @@ export const buildOptions = (appId: string, room: string): Object => {
         },
         "hiddenDomain": "recorder.8x8.vc",
         "websocket": "wss://8x8.vc/vpaas-magic-cookie-658a633d955c461f97b1f5476495bff9/xmpp-websocket",
-        "serviceUrl": "wss://8x8.vc/vpaas-magic-cookie-658a633d955c461f97b1f5476495bff9/xmpp-websocket?room=group15",
+        "serviceUrl": `wss://8x8.vc/vpaas-magic-cookie-658a633d955c461f97b1f5476495bff9/xmpp-websocket?room=${room}`,
+        // "serviceUrl": `wss://8x8.vc/vpaas-magic-cookie-658a633d955c461f97b1f5476495bff9/xmpp-websocket?room=group15`,
         "bosh": "//8x8.vc/vpaas-magic-cookie-658a633d955c461f97b1f5476495bff9/http-bind",
-        "websocketKeepAlive": "https://8x8.vc/vpaas-magic-cookie-658a633d955c461f97b1f5476495bff9/_unlock?room=group15",
+        "websocketKeepAlive": `https://8x8.vc/vpaas-magic-cookie-658a633d955c461f97b1f5476495bff9/_unlock?room=${room}`,
+        // "websocketKeepAlive": `https://8x8.vc/vpaas-magic-cookie-658a633d955c461f97b1f5476495bff9/_unlock?room=group15`,
         "openBridgeChannel": "datachannel",
         "constraints": {
             "video": {

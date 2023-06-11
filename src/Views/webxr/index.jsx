@@ -2,6 +2,8 @@ import { createDOM, cleanupDOM, throttle } from "../../tool/tools.ts";
 import useConnect from "../../hooks/useConnect.js";
 import useRoom from "../../hooks/useRoom.js";
 import Avatar from "../../component/avatar/index.jsx";
+import Pointer from "../../component/pointer/index.jsx";
+import useMovement from "../../hooks/useMovement.js";
 
 import "./index.css";
 
@@ -10,26 +12,14 @@ import floor from "../../assets/image/floor.jpg";
 import "aframe";
 import { Entity, Scene } from "aframe-react";
 import React, { useEffect, useRef, useState } from "react";
+import * as THREE from "three";
+
 
 const A = window.AFRAME;
 const JitsiMeetJS = window.JitsiMeetJS;
 const conf = JitsiMeetJS.events.conference;
 const conn = JitsiMeetJS.events.connection;
 
-A.registerComponent('movement', {
-    init: function () {
-        const el = this.el;
-        const camera = document.getElementById('cameraRig');
-        // const rightHand = document.getElementById('handRig');
-        el.addEventListener('mouseup', function (e) {
-            console.log('mousedown')
-            const point = e.detail.intersection.point;
-            console.log(point);
-            camera.setAttribute('position', point);
-            // rightHand.setAttribute('position', point);
-        });
-    },
-});
 
 
 const WebXR = () => {
@@ -37,14 +27,53 @@ const WebXR = () => {
     const connection = useConnect();
     const [connected, setConnected] = useState(false);
     const room = useRoom(connection);
+    // useMovement(sendInfo);
     const [users, setUsers] = useState({});
+    const [pointers, setPointers] = useState({});
     const localTracks = useRef([]);
     const remoteTracks = useRef({});
     // px = X position, rx = X rotation, 
-    // info = [px, pz, rx, ry, rz, color]
-    const info = useRef([0, 0, 0, 0, 0, "000000"]);
+    // info = [px, pz, rx, ry, rz]
+    const info = useRef([0, 0, 0, 0, 0]);
     const assetsRef = useRef();
     const floorRef = useRef();
+    const rigRef = useRef(null);
+    const registered = useRef(false);
+
+    useEffect(() => {
+        A.registerComponent('record-pos', {
+            tick: function () {
+                // console.log(this.el.object3D.getWorldPosition(new THREE.Vector3()));
+            }
+        });
+    }, []);
+
+    useEffect(() => {
+        if (!registered.current && room) {
+            A.registerComponent('send-pos', {
+                tick: throttle(function () {
+                    const rig = rigRef.current.el;
+                    const pos = rig.object3D.position;
+                    const rotation = this.el.getAttribute("rotation");
+                    if (pos.x !== info.current[0]
+                        || pos.y !== info.current[1]
+                        || rotation.x !== info.current[2]
+                        || rotation.y !== info.current[3]
+                        || rotation.z !== info.current[4]) {
+                        console.log(rotation);
+                        info.current[0] = pos.x;
+                        info.current[1] = pos.y;
+                        info.current[2] = rotation.x;
+                        info.current[3] = rotation.y;
+                        info.current[4] = rotation.z;
+                        sendInfo("pos", { x: pos.x, z: pos.z, rx: -rotation.x, ry: rotation.y + 180, rz: -rotation.z });
+                    }
+                }, 10000)
+            });
+            registered.current = true
+        }
+    }, [room]);
+
 
     const onLocalTracks = tracks => {
         console.log('**************localTracks**************');
@@ -95,7 +124,6 @@ const WebXR = () => {
         for (const track of localTracks.current) {
             room.addTrack(track);
         }
-        info.current[5] = room.myUserId().substr(0, 6);
     };
 
     const onConnectionFailed = () => {
@@ -124,7 +152,9 @@ const WebXR = () => {
     const onUserLeft = id => {
         console.log(`User ${id} left!`);
         delete users[id];
+        delete pointers[id];
         setUsers({ ...users });
+        setPointers({ ...pointers });
     };
 
     const onMessgeReceived = (r, data) => {
@@ -141,6 +171,10 @@ const WebXR = () => {
                 users[r._id] = [data.x, data.z, data.rx, data.ry, data.rz, r._id.substr(0, 6)];
                 setUsers({ ...users });
                 break;
+            case 'pointerPos':
+                pointers[r._id] = { x: data.x, y: data.y, z: data.z };
+                setPointers({ ...pointers });
+                break
             default:
                 break;
         }
@@ -155,36 +189,32 @@ const WebXR = () => {
         room.on(conf.USER_LEFT, onUserLeft);
         room.on(conf.ENDPOINT_MESSAGE_RECEIVED, onMessgeReceived);
         room.join();
-
-        A.registerComponent('send-pos', {
-            tick: throttle(function () {
-                const pos = this.el.object3D.position;
-                const rotation = this.el.getAttribute("rotation");
-                if (pos.x !== info.current[0]
-                    || pos.y !== info.current[1]
-                    || rotation.x !== info.current[2]
-                    || rotation.y !== info.current[3]
-                    || rotation.z !== info.current[4]) {
-                    info.current[0] = pos.x;
-                    info.current[1] = pos.y;
-                    info.current[2] = rotation.x;
-                    info.current[3] = rotation.y;
-                    info.current[4] = rotation.z;
-                    sendPos(pos.x, pos.z, -rotation.x, rotation.y + 180, -rotation.z);
-                }
-            }, 1000)
-        });
     };
 
-    const sendPos = (x, z, rx, ry, rz) => {
-        room?.sendMessage({
-            type: "pos",
-            x: x.toFixed(3),
-            z: z.toFixed(3),
-            rx: rx.toFixed(3),
-            ry: ry.toFixed(3),
-            rz: rz.toFixed(3)
-        });
+    const sendInfo = (type, info) => {
+        console.log(room)
+        switch (type) {
+            case 'pos':
+                room.sendMessage({
+                    type: 'pos',
+                    x: info.x.toFixed(3),
+                    z: info.z.toFixed(3),
+                    rx: info.rx.toFixed(3),
+                    ry: info.ry.toFixed(3),
+                    rz: info.rz.toFixed(3)
+                });
+                break;
+            case 'pointerPos':
+                room.sendMessage({
+                    type: 'pointerPos',
+                    x: info.x.toFixed(3),
+                    y: info.y.toFixed(3),
+                    z: info.z.toFixed(3)
+                });
+                break;
+            default:
+                break;
+        }
     };
 
     const connect = async () => {
@@ -230,6 +260,44 @@ const WebXR = () => {
         })
     };
 
+    const onRemovePointer = id => {
+        if (id == room.myUserId()) {
+            delete pointers[id];
+            setPointers({ ...pointers });
+        }
+    }
+
+    useEffect(() => {
+        for (const el of document.getElementsByClassName('pointable')) {
+            console.log(el);
+            el.addEventListener('mousedown', e => {
+                const point = e.detail.intersection.point;
+                const id = room.myUserId();
+                pointers[id] = point;
+                setPointers({ ...pointers });
+                sendInfo('pointerPos', point);
+            })
+        }
+
+        document.getElementById('floor').addEventListener('mouseup', e => {
+            const point = e.detail.intersection.point;
+            console.log(point);
+            const rig = document.getElementById('cameraRig');
+            // const rig = rigRef.current;
+            rig.setAttribute('position', point);
+
+            const pos = rig.object3D.position;
+            const rotation = rig.getAttribute("rotation");
+            console.log(pos, rotation)
+            info.current[0] = pos.x;
+            info.current[1] = pos.y;
+            info.current[2] = rotation.x;
+            info.current[3] = rotation.y;
+            info.current[4] = rotation.z;
+            sendInfo('pos', { x: pos.x, z: pos.z, rx: -rotation.x, ry: rotation.y + 180, rz: -rotation.z })
+        })
+    });
+
     useEffect(() => {
         if (connected) {
             onConnectionSuccess();
@@ -248,11 +316,11 @@ const WebXR = () => {
             <Scene id='scene' vr-mode-ui="enterVRButton: #VRButton">
                 <div id="VRButton">Enter VR Mode</div>
                 <Entity primitive="a-sky" radius="15" shadow="receive: true" src="aframe/sky.jpg" />
-                <a-plane movement raycaster="object: .clickable" clickable id='floor' ref={floorRef} src={floor} repeat=" 60 60" rotation="-90 0 0" scale="25 25 1" />
+                <a-plane raycaster="object: .clickable" clickable id='floor' ref={floorRef} src={floor} repeat=" 60 60" rotation="-90 0 0" scale="25 25 1" />
 
                 {/* <!--movement--> */}
-                <Entity id='cameraRig'>
-                    <Entity primitive="a-camera" user-height="1.6" send-pos>
+                <Entity id='cameraRig' ref={rigRef} >
+                    <Entity primitive="a-camera" user-height="1.6" record-pos send-pos wasd-controls-enabled="true" look-controls="enabled:true">
                         <Entity
                             primitive="a-cursor"
                             cursor={{ fuse: false }}
@@ -273,22 +341,28 @@ const WebXR = () => {
                     })
                 }
 
+                {
+                    Object.keys(pointers).map(id => {
+                        console.log(pointers)
+                        return <Pointer key={"pointer" + id} color={id} pos={pointers[id]} onclick={onRemovePointer} />
+                    })
+                }
+
                 <a-assets id="asset-container" ref={assetsRef}></a-assets>
 
                 {/* <!--ceiling--> */}
                 <a-box id='ceil' color="white" height="1" width="20" depth="20" position="0 4.5 0"></a-box>
                 {/* <!--wall--> */}
-                <a-box data-brackets-id="600" color="white" position="9.9 2 0" material="" geometry="height: 4; width: 0.2; depth: 20"></a-box>
-                <a-box data-brackets-id="627" color="white" position="0 2 -9.9" material="" geometry="height:4; width: 20; depth: 0.2"></a-box>
-                <a-box data-brackets-id="845" color="white" position="7.3 2 7.5" material="" geometry="height: 4; width: 5; depth: 0.2"></a-box>
-                <a-entity data-brackets-id="1806" gltf-model="aframe/window/scene.gltf" position="3.82 -1.0 7.7" scale="0.04 0.074 0.04" rotation="0 60 0"></a-entity>
-                <a-box data-brackets-id="845" color="white" position="-7.3 2 7.5" material="" geometry="height: 4; width: 5; depth: 0.2"></a-box>
-                <a-entity data-brackets-id="1808" gltf-model="aframe/window/scene.gltf" position="-3.86296 -1.0 7.7" scale="0.04 0.073 0.04" rotation="0 60 0"></a-entity>
-                <a-box data-brackets-id="1083" color="white" position="0.04123 2 7.5" material="" geometry="height: 4; width: 5.82; depth: 0.2"></a-box>
-                <a-box data-brackets-id="1637" color="white" position="-3.83305 3.75848 7.5" material="" geometry="height: 0.55; width: 1.96; depth: 0.2"></a-box>
-                <a-box data-brackets-id="1637" color="white" position="3.89924 3.75848 7.5" material="" geometry="height: 0.55; width: 1.96; depth: 0.2"></a-box>
-
-                <a-box data-brackets-id="303" color="white" position="-9.9 2 -5.01609" material="" geometry="height: 4; width: 0.2; depth: 9.94"></a-box>
+                <a-box color="white" position="9.9 2 0" material="" geometry="height: 4; width: 0.2; depth: 20"></a-box>
+                <a-box color="white" position="0 2 -9.9" material="" geometry="height:4; width: 20; depth: 0.2"></a-box>
+                <a-box color="white" position="7.3 2 7.5" material="" geometry="height: 4; width: 5; depth: 0.2"></a-box>
+                <a-entity class='pointable' gltf-model="aframe/window/scene.gltf" position="3.82 -1.0 7.7" scale="0.04 0.074 0.04" rotation="0 60 0"></a-entity>
+                <a-box color="white" position="-7.3 2 7.5" material="" geometry="height: 4; width: 5; depth: 0.2"></a-box>
+                <a-entity gltf-model="aframe/window/scene.gltf" position="-3.86296 -1.0 7.7" scale="0.04 0.073 0.04" rotation="0 60 0"></a-entity>
+                <a-box color="white" position="0.04123 2 7.5" material="" geometry="height: 4; width: 5.82; depth: 0.2"></a-box>
+                <a-box color="white" position="-3.83305 3.75848 7.5" material="" geometry="height: 0.55; width: 1.96; depth: 0.2"></a-box>
+                <a-box color="white" position="3.89924 3.75848 7.5" material="" geometry="height: 0.55; width: 1.96; depth: 0.2"></a-box>
+                <a-box color="white" position="-9.9 2 -5.01609" material="" geometry="height: 4; width: 0.2; depth: 9.94"></a-box>
             </Scene>
         </div>
     );

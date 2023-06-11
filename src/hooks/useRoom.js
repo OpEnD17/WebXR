@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-// import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 const useRoom = conn => {
 
     console.log('room')
-    // const [searchParams] = useSearchParams();
+    const [searchParams] = useSearchParams();
     const [room, setRoom] = useState();
     useEffect(() => {
         if (conn) {
