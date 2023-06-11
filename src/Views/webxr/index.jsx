@@ -3,16 +3,23 @@ import useConnect from "../../hooks/useConnect.js";
 import useRoom from "../../hooks/useRoom.js";
 import Avatar from "../../component/avatar/index.jsx";
 import Pointer from "../../component/pointer/index.jsx";
-import useMovement from "../../hooks/useMovement.js";
 
 import "./index.css";
 
 import floor from "../../assets/image/floor.jpg";
+import face1 from "../../assets/image/face1.png";
+import face2 from "../../assets/image/face2.png";
+import face3 from "../../assets/image/face3.png";
+import face4 from "../../assets/image/face4.png";
+import face5 from "../../assets/image/face5.png";
+import face6 from "../../assets/image/face6.png";
+import face7 from "../../assets/image/face7.png";
+import face8 from "../../assets/image/face8.png";
+import face9 from "../../assets/image/face9.png";
 
 import "aframe";
 import { Entity, Scene } from "aframe-react";
 import React, { useEffect, useRef, useState } from "react";
-import * as THREE from "three";
 
 
 const A = window.AFRAME;
@@ -21,56 +28,77 @@ const conf = JitsiMeetJS.events.conference;
 const conn = JitsiMeetJS.events.connection;
 
 
-
 const WebXR = () => {
 
     const connection = useConnect();
-    const [connected, setConnected] = useState(false);
     const room = useRoom(connection);
-    // useMovement(sendInfo);
+    const [connected, setConnected] = useState(false);
     const [users, setUsers] = useState({});
     const [pointers, setPointers] = useState({});
+
     const localTracks = useRef([]);
     const remoteTracks = useRef({});
+    const registered = useRef(false);
     // px = X position, rx = X rotation, 
     // info = [px, pz, rx, ry, rz]
     const info = useRef([0, 0, 0, 0, 0]);
-    const assetsRef = useRef();
-    const floorRef = useRef();
-    const rigRef = useRef(null);
-    const registered = useRef(false);
 
-    useEffect(() => {
-        A.registerComponent('record-pos', {
-            tick: function () {
-                // console.log(this.el.object3D.getWorldPosition(new THREE.Vector3()));
-            }
-        });
-    }, []);
+    const assetsRef = useRef(null);
+    const floorRef = useRef(null);
+    const rigRef = useRef(null);
+    const camRef = useRef(null);
 
     useEffect(() => {
         if (!registered.current && room) {
             A.registerComponent('send-pos', {
                 tick: throttle(function () {
-                    const rig = rigRef.current.el;
-                    const pos = rig.object3D.position;
+                    const rigPos = rigRef.current.el.object3D.position;
+                    const position = this.el.object3D.position;
                     const rotation = this.el.getAttribute("rotation");
-                    if (pos.x !== info.current[0]
-                        || pos.y !== info.current[1]
+                    if (rigPos.x !== info.current[0]
+                        || rigPos.z !== info.current[1]
                         || rotation.x !== info.current[2]
                         || rotation.y !== info.current[3]
                         || rotation.z !== info.current[4]) {
-                        console.log(rotation);
-                        info.current[0] = pos.x;
-                        info.current[1] = pos.y;
+                        info.current[0] = rigPos.x + position.x;
+                        info.current[1] = rigPos.z + position.z;
                         info.current[2] = rotation.x;
                         info.current[3] = rotation.y;
                         info.current[4] = rotation.z;
-                        sendInfo("pos", { x: pos.x, z: pos.z, rx: -rotation.x, ry: rotation.y + 180, rz: -rotation.z });
+                        sendInfo("pos", { x: rigPos.x + position.x, z: rigPos.z + position.z, rx: -rotation.x, ry: rotation.y + 180, rz: -rotation.z });
                     }
-                }, 10000)
+                }, 1000)
             });
-            registered.current = true
+
+            for (const el of document.getElementsByClassName('pointable')) {
+                console.log(el);
+                el.addEventListener('mousedown', e => {
+                    const point = e.detail.intersection.point;
+                    const id = room.myUserId();
+                    pointers[id] = point;
+                    setPointers({ ...pointers });
+                    sendInfo('pointerPos', point);
+                })
+            }
+
+            floorRef.current.addEventListener('mouseup', e => {
+                const point = e.detail.intersection.point;
+                const camPos = camRef.current.el.object3D.position;
+                console.log(camPos)
+                const rig = rigRef.current.el;
+                rig.setAttribute('position', { x: point.x - camPos.x, y: point.y, z: point.z - camPos.z });
+                const pos = rig.object3D.position;
+                const rotation = rig.getAttribute("rotation");
+                console.log(pos, rotation);
+                info.current[0] = pos.x - camPos.x;
+                info.current[1] = pos.z - camPos.z;
+                info.current[2] = rotation.x;
+                info.current[3] = rotation.y;
+                info.current[4] = rotation.z;
+                sendInfo('pos', { x: pos.x - camPos.x, z: pos.z - camPos.z, rx: -rotation.x, ry: rotation.y + 180, rz: -rotation.z })
+            });
+
+            registered.current = true;
         }
     }, [room]);
 
@@ -192,7 +220,6 @@ const WebXR = () => {
     };
 
     const sendInfo = (type, info) => {
-        console.log(room)
         switch (type) {
             case 'pos':
                 room.sendMessage({
@@ -268,37 +295,6 @@ const WebXR = () => {
     }
 
     useEffect(() => {
-        for (const el of document.getElementsByClassName('pointable')) {
-            console.log(el);
-            el.addEventListener('mousedown', e => {
-                const point = e.detail.intersection.point;
-                const id = room.myUserId();
-                pointers[id] = point;
-                setPointers({ ...pointers });
-                sendInfo('pointerPos', point);
-            })
-        }
-
-        document.getElementById('floor').addEventListener('mouseup', e => {
-            const point = e.detail.intersection.point;
-            console.log(point);
-            const rig = document.getElementById('cameraRig');
-            // const rig = rigRef.current;
-            rig.setAttribute('position', point);
-
-            const pos = rig.object3D.position;
-            const rotation = rig.getAttribute("rotation");
-            console.log(pos, rotation)
-            info.current[0] = pos.x;
-            info.current[1] = pos.y;
-            info.current[2] = rotation.x;
-            info.current[3] = rotation.y;
-            info.current[4] = rotation.z;
-            sendInfo('pos', { x: pos.x, z: pos.z, rx: -rotation.x, ry: rotation.y + 180, rz: -rotation.z })
-        })
-    });
-
-    useEffect(() => {
         if (connected) {
             onConnectionSuccess();
         }
@@ -320,7 +316,7 @@ const WebXR = () => {
 
                 {/* <!--movement--> */}
                 <Entity id='cameraRig' ref={rigRef} >
-                    <Entity primitive="a-camera" user-height="1.6" record-pos send-pos wasd-controls-enabled="true" look-controls="enabled:true">
+                    <Entity ref={camRef} primitive="a-camera" user-height="1.6" send-pos wasd-controls-enabled="true" look-controls="enabled:true">
                         <Entity
                             primitive="a-cursor"
                             cursor={{ fuse: false }}
@@ -343,12 +339,21 @@ const WebXR = () => {
 
                 {
                     Object.keys(pointers).map(id => {
-                        console.log(pointers)
                         return <Pointer key={"pointer" + id} color={id} pos={pointers[id]} onclick={onRemovePointer} />
                     })
                 }
 
-                <a-assets id="asset-container" ref={assetsRef}></a-assets>
+                <a-assets id="asset-container" ref={assetsRef}>
+                    <image id="face1" src={face1} />
+                    <image id="face2" src={face2} />
+                    <image id="face3" src={face3} />
+                    <image id="face4" src={face4} />
+                    <image id="face5" src={face5} />
+                    <image id="face6" src={face6} />
+                    <image id="face7" src={face7} />
+                    <image id="face8" src={face8} />
+                    <image id="face9" src={face9} />
+                </a-assets>
 
                 {/* <!--ceiling--> */}
                 <a-box id='ceil' color="white" height="1" width="20" depth="20" position="0 4.5 0"></a-box>

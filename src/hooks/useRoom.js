@@ -8,8 +8,8 @@ const useRoom = conn => {
     const [room, setRoom] = useState();
     useEffect(() => {
         if (conn) {
-            // const room = conn.initJitsiConference(searchParams.get('room'), {});
-            const room = conn.initJitsiConference("group15", {});
+            const room = conn.initJitsiConference(searchParams.get('room'), {});
+            // const room = conn.initJitsiConference("group15", {});
             setRoom(room);
         }
 

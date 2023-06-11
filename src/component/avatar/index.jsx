@@ -2,11 +2,13 @@ import 'aframe';
 import { Entity } from "aframe-react";
 import { useEffect, useRef } from 'react';
 
+
 const Avatar = ({ id, info, track }) => {
 
     const headRef = useRef();
     const bodyRef = useRef();
     const avatarRef = useRef();
+    const faceId = useRef(Math.floor(Math.random() * 9 + 1));
 
     useEffect(() => {
         headRef.current?.el.setAttribute('rotation', { x: info[2], y: info[3], z: info[4] });
@@ -17,10 +19,11 @@ const Avatar = ({ id, info, track }) => {
     return (
             <Entity id='avatar' scale="0.5 0.5 0.5" ref={avatarRef} sound = {`src: #${id}audio`}>
                 <Entity ref={headRef}>
-                    <a-box id="head" color={`#${info[5]}`} position="0 1.2 0" material="" geometry=""></a-box>
+                    <a-box id="head" color={`#${info[5]}`} position="0 1.2 0" material="" ></a-box>
                     {
                         track
-                        && <a-video src={`#${id}video`} width="1" height="1" position="0 1.2 0.51" material="" geometry=""></a-video>
+                        ? <a-video src={`#${id}video`} width="1" height="1" position="0 1.2 0.51" material="" geometry="" />
+                        : <a-plane src={`#face${faceId.current}`} width="1" height="1" position="0 1.2 0.51" material="side: double" />
                     }
                 </Entity>
                 <Entity id='body' ref={bodyRef}>
