@@ -1,0 +1,11 @@
+Model Information:
+* title:	Fence
+* source:	https://sketchfab.com/3d-models/fence-6224ede9a3bb4dfd8ed56ff1726abfbe
+* author:	Artyom (https://sketchfab.com/Art62)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Fence" (https://sketchfab.com/3d-models/fence-6224ede9a3bb4dfd8ed56ff1726abfbe) by Artyom (https://sketchfab.com/Art62) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
