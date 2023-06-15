@@ -35,7 +35,10 @@ const Layout = props => {
                     <SettingsOutlinedIcon className='icon-center' />
                 </div>
 
-                <Modal visible={visible} setVisible={setVisible} changeTarget={changeTarget} />
+                {
+                    visible
+                    && < Modal setVisible={setVisible} changeTarget={changeTarget} />
+                }
             </div>
         </>
     )
