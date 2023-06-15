@@ -13,7 +13,7 @@ const Layout = props => {
     const target = useRef("./webxr");
     const changeTarget = t => {
         target.current = t;
-    }
+    };
 
     return (
         <>
@@ -35,7 +35,10 @@ const Layout = props => {
                     <SettingsOutlinedIcon className='icon-center' />
                 </div>
 
-                <Modal visible={visible} setVisible={setVisible} changeTarget={changeTarget} />
+                {
+                    visible
+                    && <Modal setVisible={setVisible} changeTarget={changeTarget} />
+                }
             </div>
         </>
     )

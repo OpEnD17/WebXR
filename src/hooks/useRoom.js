@@ -3,7 +3,6 @@ import { useSearchParams } from "react-router-dom";
 
 const useRoom = conn => {
 
-    console.log('room')
     const [searchParams] = useSearchParams();
     const [room, setRoom] = useState();
     useEffect(() => {

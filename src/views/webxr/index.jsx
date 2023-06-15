@@ -46,8 +46,8 @@ A.registerComponent('stop', {
 
 const WebXR = () => {
 
-    const connection = useConnect();
-    const room = useRoom(connection);
+    const [connection, room] = useConnect();
+    // const room = useRoom(connection);
     const [connected, setConnected] = useState(false);
     const [users, setUsers] = useState({});
     const [pointers, setPointers] = useState({});
@@ -100,12 +100,12 @@ const WebXR = () => {
             floorRef.current.addEventListener('mouseup', e => {
                 const point = e.detail.intersection.point;
                 const camPos = camRef.current.el.object3D.position;
-                console.log(camPos)
+                // console.log(camPos)
                 const rig = rigRef.current.el;
                 rig.setAttribute('position', { x: point.x - camPos.x, y: point.y, z: point.z - camPos.z });
                 const pos = rig.object3D.position;
                 const rotation = rig.getAttribute("rotation");
-                console.log(pos, rotation);
+                // console.log(pos, rotation);
                 info.current[0] = pos.x - camPos.x;
                 info.current[1] = pos.z - camPos.z;
                 info.current[2] = rotation.x;
