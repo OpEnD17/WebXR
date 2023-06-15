@@ -216,6 +216,10 @@ const WebXR = () => {
                 setUsers({ ...users });
                 break;
             case 'pointerPos':
+                if (!data.x || !data.y || !data.z){
+                    delete pointers[r._id];
+                    setPointers({ ...pointers });
+                }
                 pointers[r._id] = { x: data.x, y: data.y, z: data.z };
                 setPointers({ ...pointers });
                 break
@@ -250,9 +254,9 @@ const WebXR = () => {
             case 'pointerPos':
                 room.sendMessage({
                     type: 'pointerPos',
-                    x: info.x.toFixed(3),
-                    y: info.y.toFixed(3),
-                    z: info.z.toFixed(3)
+                    x: info?.x.toFixed(3),
+                    y: info?.y.toFixed(3),
+                    z: info?.z.toFixed(3)
                 });
                 break;
             default:
@@ -306,6 +310,7 @@ const WebXR = () => {
     const onRemovePointer = id => {
         if (id == room.myUserId()) {
             delete pointers[id];
+            sendInfo('pointerPos', null);
             setPointers({ ...pointers });
         }
     }
