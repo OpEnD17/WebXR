@@ -17,24 +17,27 @@ const Avatar = ({ id, info, track }) => {
     }, [info[0], info[1], info[2], info[3], info[4], info[5]]);
 
     return (
-            <Entity id='avatar' scale="0.5 0.5 0.5" ref={avatarRef} sound = {`src: #${id}audio`}>
+        <Entity id='avatar' scale="0.5 0.5 0.5" ref={avatarRef} sound={`src: #${id}audio`}>
+            <Entity position="0 1.3 0">
                 <Entity ref={headRef}>
-                    <a-box id="head" color={`#${info[5]}`} position="0 1.2 0" material="" ></a-box>
+                    <a-box id="head" color={`#${info[5]}`} material="" ></a-box>
                     {
                         track
-                        ? <a-video src={`#${id}video`} width="1" height="1" position="0 1.2 0.51" material="" geometry="" />
-                        : <a-plane src={`#face${faceId.current}`} width="1" height="1" position="0 1.2 0.51" material="side: double" />
+                            ? <a-video src={`#${id}video`} width="1" height="1" position="0 0 0.51" material="" geometry="" />
+                            : <a-plane src={`#face${faceId.current}`} width="1" height="1" position="0 0 0.51" material="side: double" />
                     }
                 </Entity>
-                <Entity id='body' ref={bodyRef}>
-                    <a-box scale="1 0.2 0.5" material="" geometry="" position="0 0.6 0" color={`#${info[5]}`}></a-box>
-                    <a-box scale="0.7 1 0.5" material="" geometry="" ></a-box>
-                    <a-box id="arml" material="" geometry="" scale="0.2 1 0.2" position="0.6 0 0" rotation="0 0 20" color={`#${info[5]}`}></a-box>
-                    <a-box id="armr" material="" geometry="" scale="0.2 1 0.2" position="-0.6 0 0" rotation="0 0 -20" color={`#${info[5]}`}></a-box>
-                    <a-box id="legl" material="" geometry="" scale="0.4 1.2 0.4" position="-0.28 -1 0" rotation="0 0 -10" color={`#${info[5]}`}></a-box>
-                    <a-box id="legr" material="" geometry="" scale="0.4 1.2 0.4" position="0.28 -1 0" rotation="0 0 10" color={`#${info[5]}`}></a-box>
-                </Entity>
             </Entity>
+
+            <Entity id='body' ref={bodyRef}>
+                <a-box scale="1 0.2 0.5" material="" geometry="" position="0 0.6 0" color={`#${info[5]}`}></a-box>
+                <a-box scale="0.7 1 0.5" material="" geometry="" ></a-box>
+                <a-box id="arml" material="" geometry="" scale="0.2 1 0.2" position="0.6 0 0" rotation="0 0 20" color={`#${info[5]}`}></a-box>
+                <a-box id="armr" material="" geometry="" scale="0.2 1 0.2" position="-0.6 0 0" rotation="0 0 -20" color={`#${info[5]}`}></a-box>
+                <a-box id="legl" material="" geometry="" scale="0.4 1.2 0.4" position="-0.28 -1 0" rotation="0 0 -10" color={`#${info[5]}`}></a-box>
+                <a-box id="legr" material="" geometry="" scale="0.4 1.2 0.4" position="0.28 -1 0" rotation="0 0 10" color={`#${info[5]}`}></a-box>
+            </Entity>
+        </Entity>
 
     )
 }

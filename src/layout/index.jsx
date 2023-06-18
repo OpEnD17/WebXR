@@ -13,7 +13,7 @@ const Layout = props => {
     const target = useRef("./webxr");
     const changeTarget = t => {
         target.current = t;
-    }
+    };
 
     return (
         <>
@@ -37,7 +37,7 @@ const Layout = props => {
 
                 {
                     visible
-                    && < Modal setVisible={setVisible} changeTarget={changeTarget} />
+                    && <Modal setVisible={setVisible} changeTarget={changeTarget} />
                 }
             </div>
         </>
