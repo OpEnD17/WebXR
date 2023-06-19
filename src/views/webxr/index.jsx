@@ -17,6 +17,7 @@ import face8 from "../../assets/image/face8.png";
 import face9 from "../../assets/image/face9.png";
 
 import "aframe";
+import { useNavigate } from "react-router";
 import { Entity, Scene } from "aframe-react";
 import React, { useEffect, useRef, useState } from "react";
 
@@ -58,6 +59,8 @@ const WebXR = () => {
     const [connected, setConnected] = useState(false);
     const [users, setUsers] = useState({});
     const [pointers, setPointers] = useState({});
+
+    const navigate = useNavigate();
 
     const localTracks = useRef([]);
     const remoteTracks = useRef({});
@@ -301,6 +304,8 @@ const WebXR = () => {
         removeRemoteTracks();
         room && await room.leave();
         await disconnect();
+        navigate('/');
+        window.location.reload();
     };
 
     const removeRemoteTracks = () => {
@@ -333,13 +338,15 @@ const WebXR = () => {
         if (connection) {
             connect();
         }
-        return () => hangup();
     }, [connection]);
 
     return (
         <div>
-            <Scene id='scene' vr-mode-ui="enterVRButton: #VRButton">
-                <div id="VRButton">Enter VR Mode</div>
+            <Scene id='scene' vr-mode-ui="enterVRButton: #enterVRButton">
+                <div id="VRButtons">
+                    <div id="enterVRButton">Enter VR Mode</div>
+                    <div id="hangupButton" onClick={hangup}>Hang up</div>
+                </div>
                 <a-entity light="type:ambient"></a-entity>
                 <Entity primitive="a-sky" radius="40" shadow="receive: true" src="aframe/sky.jpg" />
                 <a-plane

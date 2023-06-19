@@ -1,14 +1,34 @@
-#VRButton {
+#VRButtons {
     position: fixed;
     left: 10px;
     top: 10px;
     z-index: 999;
     height: 30px;
-    width: 130px;
+    width: 300px;
+    display: flex;
+    align-items: center;
+    justify-content:space-around;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+#enterVRButton{
     display: flex;
     align-items: center;
     justify-content: center;
+    height: 30px;
+    width: 130px;
     border-radius: 10px;
     background-color:aliceblue;
     cursor: pointer;
+}
+
+#hangupButton{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    width: 130px;
+    background-color:crimson;
+    cursor: pointer;
+    border-radius: 10px;
 }

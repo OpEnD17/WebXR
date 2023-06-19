@@ -7,7 +7,7 @@ const Modal = props => {
     const videoRef = useRef();
 
     const stopCamera = () => {
-        mediaCamera.current.getTracks()[0].stop();
+        mediaCamera.current?.getTracks()[0].stop();
     };
 
     const onCancel = () => {

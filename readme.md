@@ -17,6 +17,7 @@ The modal component checks the availability of the camera and prompts you to ent
 # Jitsi low level APIs
 ## Connection and Room
 `connection` and `room` are established first in `useCoonect` custom hook.
+
 ***If you are familiar with React and React custom hooks, you can optimize the connection code here, as it may not be optimal.***
 
 ## Events
@@ -29,15 +30,20 @@ The modal component checks the availability of the camera and prompts you to ent
 - `onUserJoined*`: This event is triggered when participants join the room. It updates the list of users.
 - `onMessageReceived`: This event is triggered when receiving a message from other users.
 
-> For more information about Jitsi, please refer to the Jitsi Low-Level APIs guide book.
+> For more information about Jitsi, please refer to the [Jitsi Low-Level APIs guide book](https://jitsi.github.io/handbook/docs/dev-guide/dev-guide-ljm-api/) or [my Jitsi note](https://docs.google.com/document/d/1PUzzVqmlZemjqmkGzMaucf6FnlFY-_CexvMZAJ_Wbyg/edit).
 
 # A-Frame
+A-Frame is a framework built on top of Three.js that is used for creating VR scenes. If you need to utilize advanced features, it is recommended to install Three.js components.
 ## registor components
-To add various features to a component, such as recording position or adding event listeners, you need to register the component. However, A-Frame does not allow a component to be registered more than once, so the `registerComponent()` function is written within the `useEffect` hook. For features that need to be registered before the component is mounted, they should be registered outside the `useEffect` hook.
-***Alternatively, you can import all the registerComponent functions from another module for a better approach*** 
+To add various features to a component, such as recording position or adding event listeners, you need to register the component. To write external methods and apply them to specific A-Frame elements, use `AFRAME.registerComponent("componentName", {})`. Then, include the componentName in the A-Frame code to add that method to the designated element using `getElementById()` or `useRef()`. However, A-Frame does not allow a component to be registered more than once, so the `registerComponent()` function is written within the `useEffect` hook. For features that need to be registered before the component is mounted, they should be registered outside the `useEffect` hook.
 
-## 
+***Alternatively, you can import all the registerComponent functions from another module for a better approach.*** 
 
+## Elements
+To create a plane, use `<a-plane>`. For basic shapes, you can use `<a-box>` and `<a-sphere>`. To position models or custom objects, use the `<entity>` element. To display images, use `<a-img>`.
+
+
+> The documentation for A-Frame can be found at [aframe.io](https://aframe.io/docs/1.4.0/introduction/). However, for some methods, you may need to search them in the browser's search bar, for example, "aframe getposition".
 
 # Interaction
 The websocket is implemented using Jitsi Video Bridge.

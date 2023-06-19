@@ -28,20 +28,17 @@ const Join = props => {
             if (localTracks.current[i].getType() === 'video') {
                 cleanupDOM("localVideo" + i);
                 const func = () => {
-                    console.log(large);
                     setLarge(localTracks.current[i]);
                 }
                 const video = createDOM('video', {
                     autoplay: '1',
                     id: 'localVideo' + i,
                     width: 300,
-                    // height: 300,
                     class: "localVideo videoTrack",
                 });
                 video.addEventListener('click', func, false);
                 track_container.current?.append(video);
                 localTracks.current[i].attach(video);
-                console.log(localTracks.current[i]);
                 setLarge(localTracks.current[i]);
             }
         }
@@ -57,7 +54,6 @@ const Join = props => {
         if (track.getType() === 'video') {
             cleanupDOM(participant + 'video');
             const func = () => {
-                console.log(large);
                 setLarge(track);
             }
             const video = createDOM('video', {
@@ -114,10 +110,7 @@ const Join = props => {
     };
 
     const onConnectionSuccess = () => {
-        console.log('connect seccuess');
         room.current = connection.current.initJitsiConference(searchParams.get('room'), {});
-        console.log("***********room**************")
-        console.log(room);
         for (let i = 0; i < localTracks.current.length; i++) {
             room.current.addTrack(localTracks.current[i]);
         }
@@ -127,22 +120,18 @@ const Join = props => {
         room.current.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, onConferenceJoined);
         room.current.on(JitsiMeetJS.events.conference.USER_JOINED, onUserJoined);
         room.current.on(JitsiMeetJS.events.conference.USER_LEFT, onUserLeft);
-        room.current.on(JitsiMeetJS.events.conference.ENDPOINT_MESSAGE_RECEIVED, onPositionReceived);
 
         room.current.join();
     };
 
     const connect = async () => {
-        console.log(JitsiMeetJS);
         JitsiMeetJS.init();
-        console.log(JitsiMeetJS);
         connection.current = new JitsiMeetJS.JitsiConnection(null, getToken(), buildOptions());
         JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         const tracks = await JitsiMeetJS.createLocalTracks({
             devices: ["video", "audio"]
         });
         onLocalTracks(tracks);
-        console.log(connection);
         connection.current.addEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
         connection.current.addEventListener(JitsiMeetJS.events.connection.CONNECTION_FAILED, onConnectionFailed);
         connection.current.addEventListener(JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED, disconnect);
@@ -168,10 +157,6 @@ const Join = props => {
         })
     };
 
-    const onPositionReceived = (vi, data) => {
-        console.log(vi._id);
-        console.log(data);
-    }
 
     useEffect(() => {
         connect();
