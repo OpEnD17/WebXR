@@ -1,0 +1,11 @@
+Model Information:
+* title:	Back Door with Glass
+* source:	https://sketchfab.com/3d-models/back-door-with-glass-bed76c05749b41cf94870430dd9aa2e4
+* author:	MarcusStones (https://sketchfab.com/MarcusStones)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Back Door with Glass" (https://sketchfab.com/3d-models/back-door-with-glass-bed76c05749b41cf94870430dd9aa2e4) by MarcusStones (https://sketchfab.com/MarcusStones) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
