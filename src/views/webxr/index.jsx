@@ -21,6 +21,7 @@ import { useNavigate } from "react-router";
 import { Entity, Scene } from "aframe-react";
 import React, { useEffect, useRef, useState } from "react";
 require('aframe-look-at-component');
+
 const A = window.AFRAME;
 const JitsiMeetJS = window.JitsiMeetJS;
 const conf = JitsiMeetJS.events.conference;
@@ -43,6 +44,7 @@ A.registerComponent('stop', {
         });
     }
 });
+
 A.registerComponent('showtext', {
     init: function () {
         const introText = document.querySelector("#introText");
@@ -52,7 +54,8 @@ A.registerComponent('showtext', {
             introText.setAttribute("visible", !introText.getAttribute('visible'));
         })
     }
-})
+});
+
 //加在自动售卖机上的文本
 A.registerComponent('showtext1', {
     init: function () {
@@ -61,7 +64,7 @@ A.registerComponent('showtext1', {
             Text1.setAttribute("visible", !Text1.getAttribute('visible'));
         })
     }
-})
+});
 
 //也是加在自动售卖机上的文本
 A.registerComponent('showtext2', {
@@ -71,7 +74,8 @@ A.registerComponent('showtext2', {
             Text2.setAttribute("visible", !Text2.getAttribute('visible'));
         })
     }
-})
+});
+
 A.registerComponent('show', {
     init: function () {
         const introText = document.querySelector("#welcome");
@@ -81,33 +85,34 @@ A.registerComponent('show', {
     }
 });
 
-A.registerComponent('openl',{
-    init:function(){
-        const turn = document.querySelector("#rotingl");
+A.registerComponent('openl', {
+    init: function () {
+        const turn = document.querySelector('#rotingl');
         let isOpen = false;
-        this.el.addEventListener('click',function(){
+        this.el.addEventListener('click', function () {
             if (isOpen) {
-                turn.setAttribute("rotation","0 0 0")
-                isOpen = false; 
-              } else {
-                turn.setAttribute("rotation","0 90 0");
+                turn.setAttribute('rotation', "0 0 0")
+                isOpen = false;
+            } else {
+                turn.setAttribute('rotation', "0 90 0");
                 isOpen = true;
-              }
+            }
         })
     }
 });
-A.registerComponent('openr',{
-    init:function(){
-        const turn = document.querySelector("#rotingr");
+
+A.registerComponent('openr', {
+    init: function () {
+        const turn = document.querySelector('#rotingr');
         let isOpen = false;
-        this.el.addEventListener('click',function(){
+        this.el.addEventListener('click', function () {
             if (isOpen) {
-                turn.setAttribute("rotation","0 0 0")
-                isOpen = false; 
-              } else {
-                turn.setAttribute("rotation","0 -90 0");
+                turn.setAttribute('rotation', "0 0 0")
+                isOpen = false;
+            } else {
+                turn.setAttribute('rotation', "0 -90 0");
                 isOpen = true;
-              }
+            }
         })
     }
 });
@@ -133,13 +138,16 @@ const WebXR = () => {
     const rigRef = useRef(null);
     const camRef = useRef(null);
 
+    // registerComponent can only be called once, so write them inside useEffect
     useEffect(() => {
         if (!registered.current && room) {
+
+            // send position of the camera every second
             A.registerComponent('send-pos', {
                 tick: throttle(function () {
                     const rigPos = rigRef.current.el.object3D.position;
                     const position = this.el.object3D.position;
-                    const rotation = this.el.getAttribute("rotation");
+                    const rotation = this.el.getAttribute('rotation');
                     if (rigPos.x !== info.current[0]
                         || rigPos.z !== info.current[1]
                         || rotation.x !== info.current[2]
@@ -150,7 +158,7 @@ const WebXR = () => {
                         info.current[2] = rotation.x;
                         info.current[3] = rotation.y;
                         info.current[4] = rotation.z;
-                        sendInfo("pos", {
+                        sendInfo('pos', {
                             x: rigPos.x + position.x,
                             z: rigPos.z + position.z,
                             rx: -rotation.x,
@@ -161,6 +169,8 @@ const WebXR = () => {
                 }, 1000)
             });
 
+            // Add event listeners to all elements with pointable attribute.
+            // when mouse down, get the position of the intersection point and update.
             for (const el of document.getElementsByClassName('pointable')) {
                 el.addEventListener('mousedown', e => {
                     const point = e.detail.intersection.point;
@@ -170,13 +180,15 @@ const WebXR = () => {
                 });
             }
 
+            // Add event listeners to the floor
+            // get the position of the rig and relative position of the camera
             floorRef.current.addEventListener('mouseup', e => {
                 const point = e.detail.intersection.point;
                 const camPos = camRef.current.el.object3D.position;
                 const rig = rigRef.current.el;
                 rig.setAttribute('position', { x: point.x - camPos.x, y: point.y, z: point.z - camPos.z });
                 const pos = rig.object3D.position;
-                const rotation = rig.getAttribute("rotation");
+                const rotation = rig.getAttribute('rotation');
                 info.current[0] = pos.x - camPos.x;
                 info.current[1] = pos.z - camPos.z;
                 info.current[2] = rotation.x;
@@ -195,12 +207,15 @@ const WebXR = () => {
         }
     }, [room]);
 
+    // when received local tracks, add them to localTracks ref.
     const onLocalTracks = tracks => {
         for (const track of tracks) {
             localTracks.current.push(track);
         }
     };
 
+    // when received remote tracks, 
+    // add them to remoteTracks ref and add video and audio to assets container.
     const onRemoteTrack = track => {
         if (track.isLocal()) {
             return;
@@ -233,6 +248,7 @@ const WebXR = () => {
         }
     };
 
+    // when conference joined, add local tracks to the room.
     const onConferenceJoined = () => {
         console.log('conference joined!');
         for (const track of localTracks.current) {
@@ -256,6 +272,7 @@ const WebXR = () => {
         return await connection?.disconnect();
     };
 
+    // when user joined
     const onUserJoined = id => {
         console.log(`User ${id} Joined!`);
         users[id] = [0, 0, 0, 0, 0, id.substr(0, 6)];
@@ -263,6 +280,7 @@ const WebXR = () => {
         setUsers({ ...users });
     };
 
+    // when users left, delete their avatars and pointers.
     const onUserLeft = id => {
         console.log(`User ${id} left!`);
         delete users[id];
@@ -271,6 +289,7 @@ const WebXR = () => {
         setPointers({ ...pointers });
     };
 
+    // when received a message, do something according to the type.
     const onMessageReceived = (r, data) => {
         switch (data.type) {
             case "pos":
@@ -297,6 +316,7 @@ const WebXR = () => {
         }
     };
 
+    // when connection established, add event listener to room.
     const onConnectionSuccess = () => {
         setConnected(true);
         room.on(conf.TRACK_ADDED, onRemoteTrack);
@@ -308,6 +328,7 @@ const WebXR = () => {
         room.join();
     };
 
+    // send message to all other participants.
     const sendInfo = (type, info) => {
         switch (type) {
             case 'pos':
@@ -336,6 +357,8 @@ const WebXR = () => {
     const connect = async () => {
 
         JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
+
+        // create local tracks
         let flag = false;
         await navigator.mediaDevices.getUserMedia({ video: true })
             .then(() => {
@@ -380,7 +403,7 @@ const WebXR = () => {
     const onRemovePointer = id => {
         // id: int
         // room.myUserId: string
-        // === can not use here!
+        // can not use '===' here!
         if (id == room.myUserId()) {
             sendInfo('pointerPos', null);
             setPointers(pointers => ({ ...pointers, [id]: null }));
@@ -442,6 +465,7 @@ const WebXR = () => {
                 <a-box data-brackets-id="514" color="#AA0000" depth="0.2" height="0.7" width="5" position="-1.0 0.35 1.5"></a-box>
                 <a-box color="#AA0000" depth="2.4" height="0.1" width="5.5" position="-1.0 0.73905 1.5"></a-box>
 
+                {/* map users and pointers to render Avatars and Pointers */}
                 {
                     Object.keys(users).map(id => {
                         return id !== "me"
@@ -509,6 +533,7 @@ const WebXR = () => {
                     animation__scale_reverse="dur: 200; property: scale; startEvents: mouseleave; to: 1 1 1"
                     showtext>
                 </a-box>
+
                 {/* <!--baseboard--> */}
                 <a-box color="#551F06" position="9.78 0.03 -1.14" material="" geometry="depth: 17.3; height: 0.14; width: 0.02"></a-box>
                 <a-box color="#551F06" position="-9.8 0.03 -1.14" material="" geometry="depth: 17.3; height: 0.14; width: 0.02"></a-box>
@@ -531,11 +556,11 @@ const WebXR = () => {
                 <a-entity id="fence" gltf-model="aframe/fence/scene.gltf" position="9.61447 0.01001 13" scale="1 2 1" rotation="0 90 0"></a-entity>
 
                 {/* <!--wall--> */}
-                <a-box class="pointable" color="#DAD5D4" position="9.9 2 0"  geometry="height: 4; width: 0.2; depth: 20" ></a-box>
-                <a-box class="pointable" data-brackets-id="627" color="#DAD5D4" position="0 2 -9.9"  geometry="height:4; width: 20; depth: 0.2"></a-box>
-                <a-box data-brackets-id="845" color="#DAD5D4" position="7.3 2 7.5"  geometry="height: 4; width: 5; depth: 0.2"></a-box>
+                <a-box class="pointable" color="#DAD5D4" position="9.9 2 0" geometry="height: 4; width: 0.2; depth: 20" ></a-box>
+                <a-box class="pointable" data-brackets-id="627" color="#DAD5D4" position="0 2 -9.9" geometry="height:4; width: 20; depth: 0.2"></a-box>
+                <a-box data-brackets-id="845" color="#DAD5D4" position="7.3 2 7.5" geometry="height: 4; width: 5; depth: 0.2"></a-box>
                 <a-entity class="pointable" data-brackets-id="1806" gltf-model="aframe/window/scene.gltf" position="3.82 -1.1 7.7" scale="0.04 0.074 0.04" rotation="0 60 0"></a-entity>
-                <a-box class="pointable" data-brackets-id="845" color="#DAD5D4" position="-7.3 2 7.5"  geometry="height: 4; width: 5; depth: 0.2"></a-box>
+                <a-box class="pointable" data-brackets-id="845" color="#DAD5D4" position="-7.3 2 7.5" geometry="height: 4; width: 5; depth: 0.2"></a-box>
                 <a-entity class="pointable" data-brackets-id="1808" gltf-model="aframe/window/scene.gltf" position="-3.86296 -1.0 7.7" scale="0.04 0.073 0.04" rotation="0 60 0" ></a-entity>
                 <a-box position="9.9 2 11.5" color="#DAD5D4" geometry="height: 4; width: 0.2; depth: 3" ></a-box>
                 <a-box position="-9.9 2 11.5" color="#DAD5D4" geometry="height: 4; width: 0.2; depth: 3" ></a-box>
@@ -543,20 +568,15 @@ const WebXR = () => {
                 <a-box position="-0.144 3.32 7.48" color="#DAD5D4" geometry="width: 4; depth: 0.2" ></a-box>
                 {/* <!--opendoor--> */}
                 <a-box color="#DAD5D4" position="2.43 2 7.5" geometry="height: 4; width: 1; depth: 0.2"></a-box>
-                <a-box color="#DAD5D4" position="-2.39 2 7.5"  geometry="height: 4; width: 1; depth: 0.2"></a-box>
+                <a-box color="#DAD5D4" position="-2.39 2 7.5" geometry="height: 4; width: 1; depth: 0.2"></a-box>
                 <a-box id="rotingl" openl color="#DAD5D4" position="1.829 2 7.5" geometry="height: 4; width: 0.2; depth: 0.2">
                     <a-entity id="glassdoorL" gltf-model="aframe/glass-door/scene.gltf" position="-0.95 -2 0.09" scale="28.5 25 20" rotation="0 180 0"></a-entity>
                 </a-box>
-                
-                
+
                 <a-box id="rotingr" openr color="#DAD5D4" position="-1.79 2 7.5" geometry="height: 4; width: 0.2; depth: 0.2">
                     <a-entity id="glassdoorR" gltf-model="aframe/glass-door/scene.gltf" position="0.95 -2 0" scale="28.5 25 20"></a-entity>
                 </a-box>
-                
-                
-                
-                
-                
+
                 <a-box class="pointable" data-brackets-id="1637" color="#DAD5D4" position="-3.83305 3.75848 7.5" material="" geometry="height: 0.55; width: 1.96; depth: 0.2"></a-box>
                 <a-box class="pointable" data-brackets-id="1637" color="#DAD5D4" position="3.89924 3.75848 7.5" material="" geometry="height: 0.55; width: 1.96; depth: 0.2"></a-box>
                 <a-entity data-brackets-id="3153" gltf-model="" position="-9.93211 1 0.44978" scale="0.0106 0.021 0.03" rotation="0 -90 0"></a-entity>
@@ -565,7 +585,7 @@ const WebXR = () => {
                 <a-box class="pointable" data-brackets-id="1062" color="#DAD5D4" position="-9.9 0.50597 0.45838" material="" geometry="width: 0.2; depth: 1.03"></a-box>
                 <a-box class="pointable" data-brackets-id="808" color="#DAD5D4" position="-9.9 0.47759 5.4519" material="" geometry="width: 0.2; depth: 1.02"></a-box>
                 <a-box class="pointable" data-brackets-id="3234" geometry="depth: 4; height: 4; width: 0.2" color="#DAD5D4" position="-9.9 2 2.95027" ></a-box>
-                <a-entity  data-brackets-id="3224" gltf-model="" position="-9.93211 1 5.46438" scale="0.011 0.021 0.03" rotation="0 -90 0"></a-entity>
+                <a-entity data-brackets-id="3224" gltf-model="" position="-9.93211 1 5.46438" scale="0.011 0.021 0.03" rotation="0 -90 0"></a-entity>
                 <a-box class="pointable" data-brackets-id="3234" geometry="depth: 4.06; height: 4; width: 0.2" color="#DAD5D4" position="-9.9 2 7.96626" ></a-box>
                 <a-box class="pointable" data-brackets-id="303" color="#DAD5D4" position="-9.9 2 -1.99367" material="" geometry="height: 4; width: 0.2; depth: 3.9"></a-box>
                 <a-box class="pointable" data-brackets-id="303" color="#DAD5D4" position="-9.9 2 -7.36268" material="" geometry="height: 4; width: 0.2; depth: 4.9"></a-box>
@@ -645,20 +665,20 @@ const WebXR = () => {
                     <a-entity text="value: Welcome to the meeting room!; color: #12B1F1; align: center; wrapCount: 10"></a-entity>
                 </a-plane>
                 {/* <!---light--> */}
-                
-                
+
+
                 {/* <!--ceiling-skylight--> */}
                 <a-box id="ceil" color="#DAD5D4" height="0.02" width="17" depth="20" position="1.5 3.97924 0" material="" >
                     <a-box color="#DAD5D4" height="0.02" width="3.03" depth="6.15" material="" geometry="width: 3.03; depth: 6.15" position="-9.99 0 -6.957"></a-box>
                 </a-box>
                 <a-entity id="skylight" gltf-model="aframe/roof_skylight/scene.gltf" scale="0.01 0.01 0.009" rotation="0 90 0" position="-8.39 3.856 4.578"></a-entity>
                 <a-entity id="skylight" gltf-model="aframe/roof_skylight/scene.gltf" scale="0.01 0.01 0.009" rotation="0 90 0" position="-8.39 3.856 -1.042"></a-entity>
-                
+
                 {/* <!--decoration--> */}
                 <a-entity class="pointable" id="deskplant" gltf-model="aframe/potted_plant/scene.gltf" scale="0.1 0.1 0.1" position="-3.26 0.77 0.524"></a-entity>
                 <a-entity class="pointable" id="simple_pot" gltf-model="aframe/simple_pot_and_plant/scene.gltf"></a-entity>
                 <a-entity class="pointable" id="office_desk" gltf-model="aframe/office_desk/scene.gltf" scale="0.05 0.028 0.04" position="-9.5 -0.08 -4.5"></a-entity>
-                <a-entity  id="sofa" gltf-model="aframe/sofa/scene.gltf" scale="0.01 0.01 0.01" rotation="0 90 0" position="-7.8 0 -7.0"></a-entity>
+                <a-entity id="sofa" gltf-model="aframe/sofa/scene.gltf" scale="0.01 0.01 0.01" rotation="0 90 0" position="-7.8 0 -7.0"></a-entity>
                 <a-entity class="pointable" id="lamp" gltf-model="aframe/office_lamp/scene.gltf" scale="0.01 0.01 0.01" position="-8.96 0.804 -5.005" ></a-entity>
                 <a-entity class="pointable" id="lamp_light" light="color: red; type: spot; angle: 30; distance: 0.66" position="8.06028 42.07691 -5.005" rotation="-90 0 0"></a-entity>
 
@@ -675,7 +695,7 @@ const WebXR = () => {
                 <a-entity id="v-mtext1" visible="false" position="8.5 2.5 -6.5" look-at="#camera">
                     <a-entity text="value: get some drink; align: center; color: white" scale="5 5 5" look-at="#camera"></a-entity>
                 </a-entity>
-                
+
                 <a-entity id="vending-machine2"
                     gltf-model="aframe/vending_machine_coca_cola/scene.gltf"
                     position="12.81719 1.162 -2.95598"
@@ -701,10 +721,10 @@ const WebXR = () => {
                 <a-entity data-brackets-id="72" gltf-model="aframe/3d_architecture__photo_frame/scene.gltf" position="1.44 1.42 -9.8" rotation="0 -90 0" scale="1 0.9 1.3"></a-entity>
 
                 {/*photes*/}
-                 <a-image src="aframe/O.jpg" position="0.51 1.85 -9.78" scale="0.91 1.47 1"
+                <a-image src="aframe/O.jpg" position="0.51 1.85 -9.78" scale="0.91 1.47 1"
                     animation__scale="dur: 200; property: scale; startEvents: mouseenter; to: 0.97 1.53 1.06"
                     animation__scale_reverse="dur: 200; property: scale; startEvents: mouseleave; to: 0.91 1.47 1"
-                    >
+                >
                 </a-image>
                 <a-image src="aframe/Q.jpg" position="-0.464 2.3 -9.78" scale="0.76 0.66 1"
                     animation__scale="dur: 200; property: scale; startEvents: mouseenter; to: 0.82 0.72 1.06"
