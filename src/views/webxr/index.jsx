@@ -26,7 +26,7 @@ const A = window.AFRAME;
 const JitsiMeetJS = window.JitsiMeetJS;
 const conf = JitsiMeetJS.events.conference;
 const conn = JitsiMeetJS.events.connection;
-
+//add eventlistener(play music) to yellow box
 A.registerComponent('play', {
     init: function () {
         var myEL = document.querySelector("#yellow");
@@ -35,7 +35,7 @@ A.registerComponent('play', {
         });
     }
 });
-
+//add eventlistener(stop music) to yellow box
 A.registerComponent('stop', {
     init: function () {
         var myEL = document.querySelector("#yellow");
@@ -56,7 +56,7 @@ A.registerComponent('showtext', {
     }
 });
 
-//加在自动售卖机上的文本
+//add eventlistener(textmessage) to vending machine
 A.registerComponent('showtext1', {
     init: function () {
         const Text1 = document.querySelector("#v-mtext1");
@@ -66,7 +66,7 @@ A.registerComponent('showtext1', {
     }
 });
 
-//也是加在自动售卖机上的文本
+//add eventlistener(textmessage) to vending machine
 A.registerComponent('showtext2', {
     init: function () {
         const Text2 = document.querySelector("#v-mtext2");
@@ -75,7 +75,7 @@ A.registerComponent('showtext2', {
         })
     }
 });
-
+//add false to visible attribute on welcome message
 A.registerComponent('show', {
     init: function () {
         const introText = document.querySelector("#welcome");
@@ -84,7 +84,7 @@ A.registerComponent('show', {
         })
     }
 });
-
+//add eventlistener(open and close door funciton) to the left door 
 A.registerComponent('openl', {
     init: function () {
         const turn = document.querySelector('#rotingl');
@@ -100,7 +100,7 @@ A.registerComponent('openl', {
         })
     }
 });
-
+//add eventlistener(open and close door funciton) to the right door 
 A.registerComponent('openr', {
     init: function () {
         const turn = document.querySelector('#rotingr');
@@ -425,6 +425,7 @@ const WebXR = () => {
     return (
         <div>
             <Scene id='scene' vr-mode-ui="enterVRButton: #enterVRButton">
+                {/* <!--enter VR button--> */}
                 <div id="VRButtons">
                     <div id="enterVRButton">Enter VR Mode</div>
                     <div id="hangupButton" onClick={hangup}>Hang up</div>
@@ -576,7 +577,7 @@ const WebXR = () => {
                 <a-box id="rotingr" openr color="#DAD5D4" position="-1.79 2 7.5" geometry="height: 4; width: 0.2; depth: 0.2">
                     <a-entity id="glassdoorR" gltf-model="aframe/glass-door/scene.gltf" position="0.95 -2 0" scale="28.5 25 20"></a-entity>
                 </a-box>
-
+                {/* <!--wall with three windows--> */}
                 <a-box class="pointable" data-brackets-id="1637" color="#DAD5D4" position="-3.83305 3.75848 7.5" material="" geometry="height: 0.55; width: 1.96; depth: 0.2"></a-box>
                 <a-box class="pointable" data-brackets-id="1637" color="#DAD5D4" position="3.89924 3.75848 7.5" material="" geometry="height: 0.55; width: 1.96; depth: 0.2"></a-box>
                 <a-entity data-brackets-id="3153" gltf-model="" position="-9.93211 1 0.44978" scale="0.0106 0.021 0.03" rotation="0 -90 0"></a-entity>
@@ -641,12 +642,7 @@ const WebXR = () => {
                     animation__scale_reverse="dur: 200; property: scale; startEvents: mouseleave; to: 0.25 0.25 0.25"
                 />
 
-                {/* <!--UI--> */}
-                {/* <a-entity id="introText" visible="false" position="9 1.26 -7.98" rotation="0 -60 0" >
-                    <a-plane width="2" height="1" color="green" opacity="0.8" side="double">
-                        <a-entity text="value: Music !!; align: center; " scale="7 7 7"></a-entity>
-                    </a-plane>
-                </a-entity> */}
+                
                 {/* <!--text message on radio--> */}
                 <a-entity id="introText" visible="false" position="9 1.26 -7.98" look-at="#camera">
                     <a-image src="aframe/inferno.jpg" position="0 0 -0.02" look-at="#camera"></a-image>
